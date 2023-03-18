@@ -1,0 +1,31 @@
+package com.cy.demo1.service;
+
+import com.cy.demo1.data.Data;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import javax.annotation.Resource;
+import java.io.IOException;
+
+@SpringBootTest
+//@RunWith：表示启动这个单元测试类
+@RunWith(SpringRunner.class)
+public class AlgorithmServiceTests {
+    @Resource
+    private IAlgorithmService algorithmService;
+
+    @Test
+    public void getResult() throws IOException {
+        Data data = new Data();
+
+        data.num = 3;
+        data.x = new double[]{1,3,2};
+        data.y = new double[]{1,3,2};
+        int[] path = algorithmService.getResult(data);
+        for(int i = 0; i <= data.num; i++) {
+            System.out.print(path[i] + " ");
+        }
+    }
+}
