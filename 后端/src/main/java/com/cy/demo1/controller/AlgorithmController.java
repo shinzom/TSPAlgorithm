@@ -22,7 +22,7 @@ public class AlgorithmController extends BaseController{
         Data data = new Data();
         data.num = num;
         String strx = x.substring(1, x.length() - 1);
-        String stry = y.substring(1, x.length() - 1);
+        String stry = y.substring(1, y.length() - 1);
 
         String numArray1[] = strx.split(",");
         String numArray2[] = stry.split(",");
