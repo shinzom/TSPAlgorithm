@@ -2,6 +2,7 @@ package com.cy.demo1.service.impl;
 
 import com.cy.demo1.algorithm.TxTsp;
 import com.cy.demo1.data.Data;
+import com.cy.demo1.data.Result;
 import com.cy.demo1.mapper.AlgorithmMapper;
 import com.cy.demo1.service.IAlgorithmService;
 import org.springframework.stereotype.Service;
@@ -16,7 +17,7 @@ public class AlgorithmServiceImpl implements IAlgorithmService{
     private AlgorithmMapper algorithmMapper;
 
     @Override
-    public int[] getResult(Data data) throws IOException {
+    public Result getResult(Data data) throws IOException {
 //       data = new Data();
 
         //读入数据
@@ -26,7 +27,17 @@ public class AlgorithmServiceImpl implements IAlgorithmService{
 
         //调用算法，返回Data对象
         TxTsp txTsp = new TxTsp();
-        int[] result = txTsp.main(data);
+        Result result = new Result();
+        int[] path = txTsp.main(data);;
+        long startTime=System.currentTimeMillis();   //获取开始时间
+        for(int i = 0; i < 100; i++) {
+            txTsp.main(data);
+        }
+        long endTime=System.currentTimeMillis(); //获取结束时间
+        long time = endTime-startTime;
+        result.time = time;
+        System.out.println("程序运行时间： " + time + "ms");
+        result.path = path;
 //        Data result = data;
 //
 //        String str = result.x[0] + "," + result.y[0];

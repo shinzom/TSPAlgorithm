@@ -1,6 +1,7 @@
 package com.cy.demo1.controller;
 
 import com.cy.demo1.data.Data;
+import com.cy.demo1.data.Result;
 import com.cy.demo1.service.IAlgorithmService;
 import com.cy.demo1.util.JsonResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -17,7 +18,7 @@ public class AlgorithmController extends BaseController{
     private IAlgorithmService algorithmService;
 
     @RequestMapping("callAlgorithm")
-    public JsonResult<int[]> callAlgorithm(int num, String x, String y) throws IOException {
+    public JsonResult<Result> callAlgorithm(int num, String x, String y) throws IOException {
 //    public JsonResult<int[]> callAlgorithm(int num) throws IOException {
         Data data = new Data();
         data.num = num;
@@ -42,8 +43,8 @@ public class AlgorithmController extends BaseController{
 //        data.num = 3;
 //        data.x = new double[]{1,3,2};
 //        data.y = new double[]{1,3,2};
-        int[] result = algorithmService.getResult(data);
-        return new JsonResult<int[]>(OK, result);
+        Result result = algorithmService.getResult(data);
+        return new JsonResult<Result>(OK, result);
     }
 
 }
