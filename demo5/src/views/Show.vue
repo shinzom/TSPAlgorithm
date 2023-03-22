@@ -24,6 +24,7 @@
                         <el-button v-if="!isDrawing" @click="startDrawing">开始加点</el-button>
                         <el-button v-if="isDrawing" @click="stopDrawing">停止加点</el-button>
                         <el-button @click="clearMap">取消所有点</el-button>
+                        <el-button @click="deleteLastPoint">删除上一个点</el-button>
                     </div>
                     <el-button style="background-color: #f4f2c7;width: 250px ;margin-left: 23px;margin-top: 10px;"
                         @click="toggleLines">{{ isDrawingLines ? '隐藏连线' : '绘制点的连线' }}</el-button>
@@ -248,7 +249,15 @@ export default {
             }
 
         },
-
+        deleteLastPoint() {
+            if (this.pointData.num > 0) {
+                this.map.removeOverlay(this.circles.pop());
+                this.pointData.points.pop();
+                this.pointData.x.pop();
+                this.pointData.y.pop();
+                this.pointData.num--;
+            }
+        },
     },
 }
 
