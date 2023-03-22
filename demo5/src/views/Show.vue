@@ -251,13 +251,31 @@ export default {
         },
         deleteLastPoint() {
             if (this.pointData.num > 0) {
-                this.map.removeOverlay(this.circles.pop());
-                this.pointData.points.pop();
-                this.pointData.x.pop();
-                this.pointData.y.pop();
-                this.pointData.num--;
+                // 移除最后一个圆
+                const circle = this.circles.pop();
+                if (circle) {
+                    this.map.removeOverlay(circle);
+                    // 移除最后一个点
+                    this.points.pop();
+                }
+                // 清空连线
+                if (this.lines) {
+                    this.map.removeOverlay(this.lines);
+                    this.lines = null;
+                }
             }
         },
+        getTotalLength() {
+            if (this.lines) {
+                const points = this.lines.getPath();
+                let totalLength = 0;
+                for (let i = 0; i < points.length - 1; i++) {
+                    totalLength += this.map.getDistance(points[i], points[i + 1]);
+                }
+                return totalLength.toFixed(2);
+            }
+            return 0;
+        }
     },
 }
 
