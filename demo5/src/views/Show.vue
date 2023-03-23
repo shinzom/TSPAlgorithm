@@ -21,9 +21,10 @@
 
                 <div>
                     <div class="btn-group">
-                        <el-button v-if="!isDrawing" @click="startDrawing">开始加点</el-button>
-                        <el-button v-if="isDrawing" @click="stopDrawing">停止加点</el-button>
-                        <el-button @click="clearMap">取消所有点</el-button>
+                        <el-button style="background-color: #f4f2c7;width: 250px ;margin-left: 23px;" v-if="!isDrawing" @click="startDrawing">开始加点</el-button>
+                        <el-button style="background-color: #f4f2c7;width: 250px ;margin-left: 23px;" v-if="isDrawing" @click="stopDrawing">停止加点</el-button>
+                        <el-button style="background-color: #f4f2c7;width: 100px ;margin-left: 23px;margin-top: 10px;" @click="deleteLastPoint">删除上一个点</el-button>
+                        <el-button style="background-color: #f4f2c7;width: 100px ;margin-top: 10px;margin-left: 40px;" @click="clearMap">取消所有点</el-button>
                     </div>
                     <el-button style="background-color: #f4f2c7;width: 250px ;margin-left: 23px;margin-top: 10px;"
                         @click="toggleLines">{{ isDrawingLines ? '隐藏连线' : '绘制点的连线' }}</el-button>
@@ -78,7 +79,7 @@ export default {
             //表格的数据
             time_tanxin: 0,
             tableData: [],
-            tableflag:true,
+            tableflag: true,
         };
     },
 
@@ -147,6 +148,8 @@ export default {
                 this.map.removeOverlay(this.lines);
                 this.lines = null;
             }
+            //将按钮设置为“绘制路线”
+            this.isDrawingLines = false;
         },
         toggleLines() {
             if (this.isDrawingLines) {
@@ -160,7 +163,7 @@ export default {
                 //首先判断path是否为空，
                 //若tableflag = true,则path为空，则需发送请求，运行算法，并将表格的数据填充
                 //若tableflag = false，则不为空，则之前已经运行过算法，表格数据不变，只需绘制路线
-                if(this.tableflag) {
+                if (this.tableflag) {
                     if (this.datasetSelect == []) {
                         this.$message({
                             message: '请选择算法',
@@ -214,7 +217,6 @@ export default {
                                 } else {
                                     this.$message({
                                         showClose: true,
-                                        //message: res.message,
                                         message: "错误",
                                         type: 'error'
                                     })
@@ -225,7 +227,7 @@ export default {
                         }
                     }
                 }
-                else{
+                else {
                     //只绘制路线
                     let pointsArray = [];
                     let point = [];
@@ -243,12 +245,47 @@ export default {
                     });
                     this.map.addOverlay(this.lines);
                     this.isDrawingLines = true;
-                } 
+                }
 
             }
 
         },
+        //
+        deleteLastPoint() {
+            if (this.pointData.num > 0) {
+                // 移除最后一个圆
+                const circle = this.circles.pop();
+                if (circle) {
+                    this.map.removeOverlay(circle);
+                    // 移除最后一个点
+                    this.pointData.points.pop();
+                    this.pointData.x.pop();
+                    this.pointData.y.pop();
+                    this.pointData.num--;
+                }
 
+                this.tableData = [];//清空表格数据
+                this.tableflag = true;//标记变量改为true，需重新请求
+                // 清空连线
+                if (this.lines) {
+                    this.map.removeOverlay(this.lines);
+                    this.lines = null;
+                }
+                //将按钮设置为“绘制路线”
+                this.isDrawingLines = false
+            }
+        },
+        getTotalLength() {
+            if (this.lines) {
+                const points = this.lines.getPath();
+                let totalLength = 0;
+                for (let i = 0; i < points.length - 1; i++) {
+                    totalLength += this.map.getDistance(points[i], points[i + 1]);
+                }
+                return totalLength.toFixed(2);
+            }
+            return 0;
+        }
     },
 }
 
@@ -303,22 +340,9 @@ export default {
     margin-top: 10px;
 }
 
-.btn-group button {
-    margin-left: 35px;
-    width: 90px;
-    background-color: #f4f2c7;
-}
-
-// .map {
-//     width: 100%;
-//     display: flex;
-//     justify-content: center;
-//     align-items: center;
-
-//     .rightulliimg {
-//         max-width: 100%;
-//         max-height: 620px;
-
-//     }
+// .btn-group button {
+//     margin-left: 35px;
+//     width: 90px;
+//     background-color: #f4f2c7;
 // }
 </style>
