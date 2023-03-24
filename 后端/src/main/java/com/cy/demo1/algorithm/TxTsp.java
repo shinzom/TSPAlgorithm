@@ -61,7 +61,7 @@ public class TxTsp {
                     distance[i][j] = rij;
                     distance[j][i] = distance[i][j];
 //                }
-                System.out.println(i + "," + j + ":" + distance[i][j]);
+//                System.out.println(i + "," + j + ":" + distance[i][j]);
             }
         }
 

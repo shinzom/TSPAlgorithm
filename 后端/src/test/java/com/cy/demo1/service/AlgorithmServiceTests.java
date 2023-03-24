@@ -1,6 +1,7 @@
 package com.cy.demo1.service;
 
 import com.cy.demo1.data.Data;
+import com.cy.demo1.data.Result;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,12 +21,13 @@ public class AlgorithmServiceTests {
     public void getResult() throws IOException {
         Data data = new Data();
 
-        data.num = 3;
-        data.x = new double[]{1,3,2};
-        data.y = new double[]{1,3,2};
-        int[] path = algorithmService.getResult(data);
+        data.num = 10;
+        data.x = new double[]{1,2,3,4,5,6,7,8,9,10};
+        data.y = new double[]{1,2,3,4,5,6,7,8,9,10};
+        Result result = algorithmService.getResult_tx(data);
+        System.out.println("time:" + result.time);
         for(int i = 0; i <= data.num; i++) {
-            System.out.print(path[i] + " ");
+            System.out.print(result.path[i] + " ");
         }
     }
 }
