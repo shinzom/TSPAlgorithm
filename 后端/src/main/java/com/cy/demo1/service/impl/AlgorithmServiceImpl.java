@@ -2,6 +2,7 @@ package com.cy.demo1.service.impl;
 
 import com.cy.demo1.algorithm.SA_TSP;
 import com.cy.demo1.algorithm.TSp;
+import com.cy.demo1.algorithm.Tabu;
 import com.cy.demo1.algorithm.TxTsp;
 import com.cy.demo1.data.Data;
 import com.cy.demo1.data.Result;
@@ -63,6 +64,20 @@ public class AlgorithmServiceImpl implements IAlgorithmService{
         SA_TSP sa_tsp= new SA_TSP();
         long startTime=System.currentTimeMillis();   //获取开始时间
         int[] path = sa_tsp.main(data);
+        long endTime=System.currentTimeMillis(); //获取结束时间
+        long time = endTime-startTime;
+        result.time = time;
+        System.out.println("程序运行时间： " + time + "ms");
+        result.path = path;
+        return result;
+    }
+
+    public Result getResult_tabu(Data data) throws IOException {
+        //调用算法，返回Data对象
+        Result result = new Result();
+        Tabu tabu = new Tabu();
+        long startTime=System.currentTimeMillis();   //获取开始时间
+        int[] path = tabu.main(data);
         long endTime=System.currentTimeMillis(); //获取结束时间
         long time = endTime-startTime;
         result.time = time;
