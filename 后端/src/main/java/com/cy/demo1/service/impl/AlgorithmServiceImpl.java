@@ -4,6 +4,7 @@ import com.cy.demo1.algorithm.SA_TSP;
 import com.cy.demo1.algorithm.TSp;
 import com.cy.demo1.algorithm.Tabu;
 import com.cy.demo1.algorithm.TxTsp;
+import com.cy.demo1.algorithm.Aco.ACO;
 import com.cy.demo1.data.Data;
 import com.cy.demo1.data.Result;
 import com.cy.demo1.mapper.AlgorithmMapper;
@@ -78,6 +79,24 @@ public class AlgorithmServiceImpl implements IAlgorithmService{
         Tabu tabu = new Tabu();
         long startTime=System.currentTimeMillis();   //获取开始时间
         int[] path = tabu.main(data);
+        long endTime=System.currentTimeMillis(); //获取结束时间
+        long time = endTime-startTime;
+        result.time = time;
+        System.out.println("程序运行时间： " + time + "ms");
+        result.path = path;
+
+        ACO aco = new ACO();
+        aco.main(data);
+
+        return result;
+    }
+
+    public Result getResult_aco(Data data) throws IOException {
+        //调用算法，返回Data对象
+        Result result = new Result();
+        ACO aco = new ACO();
+        long startTime=System.currentTimeMillis();   //获取开始时间
+        int[] path = aco.main(data);;
         long endTime=System.currentTimeMillis(); //获取结束时间
         long time = endTime-startTime;
         result.time = time;

@@ -14,4 +14,6 @@ public interface IAlgorithmService {
     Result getResult_sa(Data data) throws IOException;
 
     Result getResult_tabu(Data data) throws IOException;
+
+    Result getResult_aco(Data data) throws IOException;
 }
