@@ -5,9 +5,7 @@
     <div>
     <p>
         <router-link to="/">Go To Home</router-link>
-        <router-link to="/Show">Go To Show</router-link>
-        <router-link to="/map">Go To Map</router-link>
-        
+        <router-link to="/Show">Go To Show</router-link>  
     </p>
     <router-view></router-view>
     </div>

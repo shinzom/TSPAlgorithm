@@ -7,7 +7,7 @@
         </el-header>
         <el-container style="height: 100%;">
             <el-aside>
-                <el-form-item label="菜单" style="margin-left: 12px;margin-top: 10px;"></el-form-item>
+                <el-form-item label="菜单" style="margin-left: 12px;margin-top: 5px;"></el-form-item>
                 <div class="selectTitle">
                     <span>菜单</span>
                 </div>
@@ -18,28 +18,41 @@
                             @click="startDrawing">开始加点</el-button>
                         <el-button style="background-color: #f4f2c7;width: 250px ;margin-left: 23px;" v-if="isDrawing"
                             @click="stopDrawing">停止加点</el-button>
-                        <el-button style="background-color: #f4f2c7;width: 100px ;margin-left: 23px;margin-top: 10px;"
+                        <el-button style="background-color: #f4f2c7;width: 100px ;margin-left: 23px;margin-top: 5px;"
                             @click="deleteLastPoint">删除上一个点</el-button>
-                        <el-button style="background-color: #f4f2c7;width: 100px ;margin-top: 10px;margin-left: 40px;"
+                        <el-button style="background-color: #f4f2c7;width: 100px ;margin-top: 5px;margin-left: 50px;"
                             @click="clearMap">取消所有点</el-button>
                     </div>
-                    <el-button style="background-color: #f4f2c7;width: 250px ;margin-left: 23px;margin-top: 10px;"
+                    <el-button style="background-color: #f4f2c7;width: 250px ;margin-left: 23px;margin-top: 5px;"
                         @click="toggleLines">{{ isDrawingLines ? '隐藏连线' : '绘制点的连线' }}</el-button>
                 </div>
 
-                <el-table ref="multipleTableRef" :data="tableData" style="width: 265px;margin-top: 10px;margin-left: 15px;"
-                :default-sort="{ prop: 'distance', order: 'ascending' }" @selection-change="handleSelectionChange">
+                <el-table ref="multipleTableRef" :data="tableData" style="width: 265px;margin-top: 5px;margin-left: 15px;"
+                    :default-sort="{ prop: 'distance', order: 'ascending' }" @selection-change="handleSelectionChange">
                     <el-table-column type="selection" width="27" />
                     <el-table-column prop="alg" label="算法" width="80" />
                     <el-table-column prop="time" label="时间" sortable width="76" />
                     <el-table-column prop="distance" label="距离" sortable width="100" />
                 </el-table>
-                <el-button style="background-color: #f4f2c7;width: 250px ;margin-left: 23px;margin-top: 10px;"
+                <el-button style="background-color: #f4f2c7;width: 250px ;margin-left: 23px;margin-top: 5px;"
                     @click="draw">绘制所选算法的路线</el-button>
+
+                <el-divider />
+                <span style="margin: 0 auto; color: #1b3366; ">多架无人机协同</span>
+                <el-form class="form_class" style="margin-top: 10px;">
+                    <el-form-item label="无人机数量:" label-width="140px">
+                        <el-input v-model="num" placeholder="无人机数量" style="width:110px;"></el-input>
+                    </el-form-item>
+                    <el-form-item label="每架无人机距离限制:" label-width="165px">
+                        <el-input v-model="limit" placeholder="距离限制" style="width:110px;"></el-input>
+                    </el-form-item>
+                </el-form>
+                <el-button style="background-color: #f4f2c7;width: 250px ;margin-left: 23px;"
+                    @click="synAlg">绘制路线</el-button>
             </el-aside>
 
             <el-main>
-                <div id="map" style="width: 100%; height: 550px;margin-top: 30px;"></div>
+                <div id="map" style="width: 100%; height: 595px;margin-top: 30px;"></div>
 
             </el-main>
         </el-container>
@@ -95,6 +108,8 @@ export default {
             tableflag: true,
 
             multipleSelection: [],
+
+            // numVal,
         };
     },
 
@@ -205,6 +220,7 @@ export default {
                 //首先判断path是否为空，
                 //若tableflag = true,则path为空，则需发送请求，运行算法，并将表格的数据填充
                 //若tableflag = false，则不为空，则之前已经运行过算法，表格数据不变，只需绘制路线
+
                 if (this.tableflag) {
                     if (this.pointData.points.length < 2) {
                         return;
@@ -424,7 +440,7 @@ export default {
                                 pointsArray_aco.push(new BMap.Point(point_aco.lng, point_aco.lat)); //添加每一个点
                             }
                             this.lines_aco = new BMap.Polyline(pointsArray_aco, {
-                                strokeColor: "yellow",
+                                strokeColor: "orange",
                                 strokeWeight: 2,
                                 strokeOpacity: 0.5,
                             });
@@ -568,7 +584,12 @@ export default {
                 }
             }
             this.isDrawingLines = true;
-        }
+        },
+
+        //多架无人机协同算法
+        synAlg() {
+
+        },
     },
 }
 
@@ -616,16 +637,6 @@ export default {
     display: flex;
     flex-direction: column;
     width: "250px";
-    height: 83vh;
+    height: 90vh;
 }
-
-.btn-group {
-    margin-top: 10px;
-}
-
-// .btn-group button {
-//     margin-left: 35px;
-//     width: 90px;
-//     background-color: #f4f2c7;
-// }
 </style>
