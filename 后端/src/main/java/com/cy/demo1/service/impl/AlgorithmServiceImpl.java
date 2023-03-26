@@ -102,9 +102,6 @@ public class AlgorithmServiceImpl implements IAlgorithmService{
         result.time = time;
         System.out.println("程序运行时间： " + time + "ms");
         result.path = path;
-
-        solveMTSP(data,2,250);
-
         return result;
     }
 
