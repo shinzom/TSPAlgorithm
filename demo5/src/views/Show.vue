@@ -41,7 +41,7 @@
                 <span style="margin: 0 auto; color: #1b3366; ">多架无人机协同</span>
                 <el-form class="form_class" style="margin-top: 10px;">
                     <el-form-item label="无人机数量:" label-width="140px">
-                        <el-input v-model="num" placeholder="无人机数量" style="width:110px;"></el-input>
+                        <el-input v-model="planeNum" placeholder="无人机数量" style="width:110px;"></el-input>
                     </el-form-item>
                     <el-form-item label="每架无人机距离限制:" label-width="165px">
                         <el-input v-model="limit" placeholder="距离限制" style="width:110px;"></el-input>
