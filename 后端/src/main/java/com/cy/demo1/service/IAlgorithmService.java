@@ -3,6 +3,7 @@ package com.cy.demo1.service;
 
 import com.cy.demo1.data.Data;
 import com.cy.demo1.data.Result;
+import com.cy.demo1.data.Result2;
 
 import java.io.IOException;
 
@@ -16,4 +17,6 @@ public interface IAlgorithmService {
     Result getResult_tabu(Data data) throws IOException;
 
     Result getResult_aco(Data data) throws IOException;
+
+    Result2 getResult_mtsp(Data data, int num, double distance) throws IOException;
 }

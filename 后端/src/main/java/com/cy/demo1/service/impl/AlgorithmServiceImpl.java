@@ -1,18 +1,18 @@
 package com.cy.demo1.service.impl;
 
-import com.cy.demo1.algorithm.SA_TSP;
-import com.cy.demo1.algorithm.TSp;
-import com.cy.demo1.algorithm.Tabu;
-import com.cy.demo1.algorithm.TxTsp;
+import com.cy.demo1.algorithm.*;
 import com.cy.demo1.algorithm.Aco.ACO;
 import com.cy.demo1.data.Data;
 import com.cy.demo1.data.Result;
+import com.cy.demo1.data.Result2;
 import com.cy.demo1.mapper.AlgorithmMapper;
 import com.cy.demo1.service.IAlgorithmService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+
+import static com.cy.demo1.algorithm.MTSPWithLimits.solveMTSP;
 
 @Service
 public class AlgorithmServiceImpl implements IAlgorithmService{
@@ -97,6 +97,22 @@ public class AlgorithmServiceImpl implements IAlgorithmService{
         ACO aco = new ACO();
         long startTime=System.currentTimeMillis();   //获取开始时间
         int[] path = aco.main(data);;
+        long endTime=System.currentTimeMillis(); //获取结束时间
+        long time = endTime-startTime;
+        result.time = time;
+        System.out.println("程序运行时间： " + time + "ms");
+        result.path = path;
+
+        solveMTSP(data,2,250);
+
+        return result;
+    }
+
+    public Result2 getResult_mtsp(Data data, int num, double distance) throws IOException {
+        Result2 result = new Result2();
+
+        long startTime=System.currentTimeMillis();   //获取开始时间
+        int path[][] = solveMTSP(data,num,distance);
         long endTime=System.currentTimeMillis(); //获取结束时间
         long time = endTime-startTime;
         result.time = time;

@@ -2,6 +2,7 @@ package com.cy.demo1.controller;
 
 import com.cy.demo1.data.Data;
 import com.cy.demo1.data.Result;
+import com.cy.demo1.data.Result2;
 import com.cy.demo1.service.IAlgorithmService;
 import com.cy.demo1.util.JsonResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -149,6 +150,32 @@ public class AlgorithmController extends BaseController{
         data.y = doubleArray2;
         Result result = algorithmService.getResult_aco(data);
         return new JsonResult<Result>(OK, result);
+    }
+
+    @RequestMapping("callAlgorithm_mtsp")
+    public JsonResult<Result2> callAlgorithm_mtsp(int num, String x, String y, int planeNum, double limit) throws IOException {
+        Data data = new Data();
+        data.num = num;
+        String strx = x.substring(1, x.length() - 1);
+        String stry = y.substring(1, y.length() - 1);
+
+        String numArray1[] = strx.split(",");
+        String numArray2[] = stry.split(",");
+
+        double doubleArray1[] = new double[numArray1.length];
+        double doubleArray2[] = new double[numArray2.length];
+
+        double d;
+        for (int i = 0; i < num; i++) {
+            d = Double.parseDouble(numArray1[i]);  //string 转 double
+            doubleArray1[i] = d;
+            d = Double.parseDouble(numArray2[i]);  //string 转 double
+            doubleArray2[i] = d;
+        }
+        data.x = doubleArray1;
+        data.y = doubleArray2;
+        Result2 result = algorithmService.getResult_mtsp(data,planeNum,limit);
+        return new JsonResult<Result2>(OK, result);
     }
 }
 
