@@ -27,12 +27,15 @@
                         @click="toggleLines">{{ isDrawingLines ? '隐藏连线' : '绘制点的连线' }}</el-button>
                 </div>
 
-                <el-table ref="multipleTableRef" :data="tableData" style="width: 265px;margin-top: 10px;margin-left: 15px;">
+                <el-table ref="multipleTableRef" :data="tableData" style="width: 265px;margin-top: 10px;margin-left: 15px;"
+                :default-sort="{ prop: 'distance', order: 'ascending' }" @selection-change="handleSelectionChange">
                     <el-table-column type="selection" width="27" />
                     <el-table-column prop="alg" label="算法" width="80" />
                     <el-table-column prop="time" label="时间" sortable width="76" />
                     <el-table-column prop="distance" label="距离" sortable width="100" />
                 </el-table>
+                <el-button style="background-color: #f4f2c7;width: 250px ;margin-left: 23px;margin-top: 10px;"
+                    @click="draw">绘制所选算法的路线</el-button>
             </el-aside>
 
             <el-main>
@@ -90,6 +93,8 @@ export default {
             distance_aco: 0,
             tableData: [],
             tableflag: true,
+
+            multipleSelection: [],
         };
     },
 
@@ -160,10 +165,27 @@ export default {
             this.path_aco = [];
 
             // 清空连线
+            if (this.lines_tx) {
+                this.map.removeOverlay(this.lines_tx);
+                this.lines_tx = null;
+            }
             if (this.lines_dp) {
                 this.map.removeOverlay(this.lines_dp);
                 this.lines_dp = null;
             }
+            if (this.lines_sa) {
+                this.map.removeOverlay(this.lines_sa);
+                this.lines_sa = null;
+            }
+            if (this.lines_tabu) {
+                this.map.removeOverlay(this.lines_tabu);
+                this.lines_tabu = null;
+            }
+            if (this.lines_aco) {
+                this.map.removeOverlay(this.lines_aco);
+                this.lines_aco = null;
+            }
+
             //将按钮设置为“绘制路线”
             this.isDrawingLines = false;
         },
@@ -171,7 +193,11 @@ export default {
             if (this.isDrawingLines) {
                 // 隐藏连线
                 this.isDrawingLines = false;
+                this.map.removeOverlay(this.lines_tx);
                 this.map.removeOverlay(this.lines_dp);
+                this.map.removeOverlay(this.lines_sa);
+                this.map.removeOverlay(this.lines_tabu);
+                this.map.removeOverlay(this.lines_aco);
                 this.lines_dp = null;
 
             } else {
@@ -199,11 +225,11 @@ export default {
                                 point = points[this.path_tx[i]];
                                 pointsArray.push(new BMap.Point(point.lng, point.lat)); //添加每一个点
                             }
-                            // this.lines_tx = new BMap.Polyline(pointsArray, {
-                            //     strokeColor: "red",
-                            //     strokeWeight: 2,
-                            //     strokeOpacity: 0.5,
-                            // });
+                            this.lines_tx = new BMap.Polyline(pointsArray, {
+                                strokeColor: "red",
+                                strokeWeight: 2,
+                                strokeOpacity: 0.5,
+                            });
                             // this.map.addOverlay(this.lines_tx);
                             // this.isDrawingLines = true;
 
@@ -299,11 +325,11 @@ export default {
                                 point_sa = points_sa[this.path_sa[i_sa]];
                                 pointsArray_sa.push(new BMap.Point(point_sa.lng, point_sa.lat)); //添加每一个点
                             }
-                            // this.lines_sa = new BMap.Polyline(pointsArray_sa, {
-                            //     strokeColor: "blue",
-                            //     strokeWeight: 2,
-                            //     strokeOpacity: 0.5,
-                            // });
+                            this.lines_sa = new BMap.Polyline(pointsArray_sa, {
+                                strokeColor: "black",
+                                strokeWeight: 2,
+                                strokeOpacity: 0.5,
+                            });
                             // this.map.addOverlay(this.lines_sa);
                             // this.isDrawingLines = true;
 
@@ -348,11 +374,11 @@ export default {
                                 point_tabu = points_tabu[this.path_tabu[i_tabu]];
                                 pointsArray_tabu.push(new BMap.Point(point_tabu.lng, point_tabu.lat)); //添加每一个点
                             }
-                            // this.lines_tabu = new BMap.Polyline(pointsArray_tabu, {
-                            //     strokeColor: "blue",
-                            //     strokeWeight: 2,
-                            //     strokeOpacity: 0.5,
-                            // });
+                            this.lines_tabu = new BMap.Polyline(pointsArray_tabu, {
+                                strokeColor: "green",
+                                strokeWeight: 2,
+                                strokeOpacity: 0.5,
+                            });
                             // this.map.addOverlay(this.lines_tabu);
                             // this.isDrawingLines = true;
 
@@ -397,11 +423,11 @@ export default {
                                 point_aco = points_aco[this.path_aco[i_aco]];
                                 pointsArray_aco.push(new BMap.Point(point_aco.lng, point_aco.lat)); //添加每一个点
                             }
-                            // this.lines_aco = new BMap.Polyline(pointsArray_aco, {
-                            //     strokeColor: "blue",
-                            //     strokeWeight: 2,
-                            //     strokeOpacity: 0.5,
-                            // });
+                            this.lines_aco = new BMap.Polyline(pointsArray_aco, {
+                                strokeColor: "yellow",
+                                strokeWeight: 2,
+                                strokeOpacity: 0.5,
+                            });
                             // this.map.addOverlay(this.lines_aco);
                             // this.isDrawingLines = true;
 
@@ -432,6 +458,7 @@ export default {
 
                     //标记变量设为false
                     this.tableflag = false;
+                    console.log(this.tableData);
                 }
                 else {
                     //只绘制路线
@@ -457,6 +484,7 @@ export default {
 
         },
 
+        //移除最后一个点
         deleteLastPoint() {
             if (this.pointData.num > 0) {
                 // 移除最后一个圆
@@ -477,22 +505,70 @@ export default {
                     this.map.removeOverlay(this.lines_tx);
                     this.lines_tx = null;
                 }
+                if (this.lines_dp) {
+                    this.map.removeOverlay(this.lines_dp);
+                    this.lines_dp = null;
+                }
+                if (this.lines_sa) {
+                    this.map.removeOverlay(this.lines_sa);
+                    this.lines_sa = null;
+                }
+                if (this.lines_tabu) {
+                    this.map.removeOverlay(this.lines_tabu);
+                    this.lines_tabu = null;
+                }
+                if (this.lines_aco) {
+                    this.map.removeOverlay(this.lines_aco);
+                    this.lines_aco = null;
+                }
                 //将按钮设置为“绘制路线”
                 this.isDrawingLines = false
             }
         },
-        //计算总距离
-        // getTotalLength(pointsArray) {
-        //     if (pointsArray) {
-        //         console.log(pointsArray);
-        //         let totalLength = 0;
-        //         for (let i = 0; i < pointsArray.length - 1; i++) {
-        //             totalLength += this.map.getDistance(pointsArray[i], pointsArray[i + 1]);
-        //         }
-        //         return totalLength.toFixed(2);
-        //     }
-        //     return 0;
-        // }
+
+        //将表格中选择的数据存到multipleSelection
+        handleSelectionChange(val) {
+            this.multipleSelection = val;
+        },
+
+        //绘制所选算法的路线
+        draw() {
+            if (this.multipleSelection.length == 0) {
+                this.map.removeOverlay(this.lines_tx);
+                this.map.removeOverlay(this.lines_sa);
+                this.map.removeOverlay(this.lines_tabu);
+                this.map.removeOverlay(this.lines_aco);
+                this.map.addOverlay(this.lines_dp);
+
+                return;
+            }
+            this.map.removeOverlay(this.lines_tx);
+            this.map.removeOverlay(this.lines_dp);
+            this.map.removeOverlay(this.lines_sa);
+            this.map.removeOverlay(this.lines_tabu);
+            this.map.removeOverlay(this.lines_aco);
+
+            let algSelect = "";
+            for (let i = 0; i < this.multipleSelection.length; i++) {
+                algSelect = this.multipleSelection[i].alg;
+                if (algSelect == "贪心") {
+                    this.map.addOverlay(this.lines_tx);
+                }
+                else if (algSelect == "动态规划") {
+                    this.map.addOverlay(this.lines_dp);
+                }
+                else if (algSelect == "模拟退火") {
+                    this.map.addOverlay(this.lines_sa);
+                }
+                else if (algSelect == "禁忌搜索") {
+                    this.map.addOverlay(this.lines_tabu);
+                }
+                else if (algSelect == "蚁群") {
+                    this.map.addOverlay(this.lines_aco);
+                }
+            }
+            this.isDrawingLines = true;
+        }
     },
 }
 
