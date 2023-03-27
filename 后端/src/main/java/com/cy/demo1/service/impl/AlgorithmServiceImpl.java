@@ -105,11 +105,12 @@ public class AlgorithmServiceImpl implements IAlgorithmService{
         return result;
     }
 
-    public Result2 getResult_mtsp(Data data, int num, double distance) throws IOException {
+    public Result2 getResult_mtsp(Data data, int num, double distance, boolean radioVal) throws IOException {
         Result2 result = new Result2();
 
         long startTime=System.currentTimeMillis();   //获取开始时间
-        int path[][] = solveMTSP(data,num,distance);
+
+        int path[][] = solveMTSP(data,num,distance,radioVal);
         long endTime=System.currentTimeMillis(); //获取结束时间
         long time = endTime-startTime;
         result.time = time;

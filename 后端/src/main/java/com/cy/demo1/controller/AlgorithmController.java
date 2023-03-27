@@ -153,7 +153,7 @@ public class AlgorithmController extends BaseController{
     }
 
     @RequestMapping("callAlgorithm_mtsp")
-    public JsonResult<Result2> callAlgorithm_mtsp(int num, String x, String y, int planeNum, double limit) throws IOException {
+    public JsonResult<Result2> callAlgorithm_mtsp(int num, String x, String y, int planeNum, double limit, boolean radioVal) throws IOException {
         Data data = new Data();
         data.num = num;
         String strx = x.substring(1, x.length() - 1);
@@ -174,7 +174,7 @@ public class AlgorithmController extends BaseController{
         }
         data.x = doubleArray1;
         data.y = doubleArray2;
-        Result2 result = algorithmService.getResult_mtsp(data,planeNum,limit);
+        Result2 result = algorithmService.getResult_mtsp(data,planeNum,limit, radioVal);
         return new JsonResult<Result2>(OK, result);
     }
 }

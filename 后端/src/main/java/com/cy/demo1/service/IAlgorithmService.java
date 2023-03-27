@@ -18,5 +18,5 @@ public interface IAlgorithmService {
 
     Result getResult_aco(Data data) throws IOException;
 
-    Result2 getResult_mtsp(Data data, int num, double distance) throws IOException;
+    Result2 getResult_mtsp(Data data, int num, double distance, boolean radioVal) throws IOException;
 }
