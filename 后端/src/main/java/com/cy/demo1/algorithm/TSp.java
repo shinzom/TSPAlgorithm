@@ -120,4 +120,8 @@ public class TSp{
         System.out.println("运行时间为:"+c);//输出运行时间
         return path;
     }
+
+    public double getDistance() {
+        return s;
+    }
 }

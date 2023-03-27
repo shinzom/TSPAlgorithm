@@ -77,7 +77,7 @@ public class AlgorithmController extends BaseController{
     }
 
     @RequestMapping("callAlgorithm_dp")
-    public JsonResult<Result> callAlgorithm_dp(int num, String x, String y) throws IOException {
+    public JsonResult<Result> callAlgorithm_dp(int num, String x, String y, int id) throws IOException {
         Data data = new Data();
         data.num = num;
         String strx = x.substring(1, x.length() - 1);
@@ -98,12 +98,12 @@ public class AlgorithmController extends BaseController{
         }
         data.x = doubleArray1;
         data.y = doubleArray2;
-        Result result = algorithmService.getResult_dp(data);
+        Result result = algorithmService.getResult_dp(data, id);
         return new JsonResult<Result>(OK, result);
     }
 
     @RequestMapping("callAlgorithm_sa")
-    public JsonResult<Result> callAlgorithm_sa(int num, String x, String y) throws IOException {
+    public JsonResult<Result> callAlgorithm_sa(int num, String x, String y, int id) throws IOException {
         Data data = new Data();
         data.num = num;
         String strx = x.substring(1, x.length() - 1);
@@ -124,12 +124,12 @@ public class AlgorithmController extends BaseController{
         }
         data.x = doubleArray1;
         data.y = doubleArray2;
-        Result result = algorithmService.getResult_sa(data);
+        Result result = algorithmService.getResult_sa(data, id);
         return new JsonResult<Result>(OK, result);
     }
 
     @RequestMapping("callAlgorithm_tabu")
-    public JsonResult<Result> callAlgorithm_tabu(int num, String x, String y) throws IOException {
+    public JsonResult<Result> callAlgorithm_tabu(int num, String x, String y, int id) throws IOException {
         Data data = new Data();
         data.num = num;
         String strx = x.substring(1, x.length() - 1);
@@ -150,12 +150,12 @@ public class AlgorithmController extends BaseController{
         }
         data.x = doubleArray1;
         data.y = doubleArray2;
-        Result result = algorithmService.getResult_tabu(data);
+        Result result = algorithmService.getResult_tabu(data, id);
         return new JsonResult<Result>(OK, result);
     }
 
     @RequestMapping("callAlgorithm_aco")
-    public JsonResult<Result> callAlgorithm_aco(int num, String x, String y) throws IOException {
+    public JsonResult<Result> callAlgorithm_aco(int num, String x, String y, int id) throws IOException {
         Data data = new Data();
         data.num = num;
         String strx = x.substring(1, x.length() - 1);
@@ -176,7 +176,7 @@ public class AlgorithmController extends BaseController{
         }
         data.x = doubleArray1;
         data.y = doubleArray2;
-        Result result = algorithmService.getResult_aco(data);
+        Result result = algorithmService.getResult_aco(data, id);
         return new JsonResult<Result>(OK, result);
     }
 

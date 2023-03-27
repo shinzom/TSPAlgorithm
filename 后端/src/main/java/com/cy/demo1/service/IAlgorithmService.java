@@ -12,13 +12,13 @@ public interface IAlgorithmService {
 
     //调用算法
     Result getResult_tx(Data data, int id) throws IOException;
-    Result getResult_dp(Data data) throws IOException;
+    Result getResult_dp(Data data, int id) throws IOException;
 
-    Result getResult_sa(Data data) throws IOException;
+    Result getResult_sa(Data data, int id) throws IOException;
 
-    Result getResult_tabu(Data data) throws IOException;
+    Result getResult_tabu(Data data, int id) throws IOException;
 
-    Result getResult_aco(Data data) throws IOException;
+    Result getResult_aco(Data data, int id) throws IOException;
 
     Result2 getResult_mtsp(Data data, int num, double distance, boolean radioVal) throws IOException;
 }

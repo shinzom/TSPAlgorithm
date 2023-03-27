@@ -285,4 +285,8 @@ public class Tabu {
         path[data.num] = bestGh[0];
         return path;
     }
+
+    public double getDistance() {
+        return bestEvaluation;
+    }
 }

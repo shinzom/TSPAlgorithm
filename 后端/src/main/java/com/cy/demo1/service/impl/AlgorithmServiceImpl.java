@@ -42,7 +42,6 @@ public class AlgorithmServiceImpl implements IAlgorithmService{
         Result_ result_ = new Result_();
         result_.setResult_id(id);
         result_.setTime(time);
-
         result_.setDistance(txTsp.getDistance());
         String str = "";
         for(int i = 0; i < data.num; i++) {
@@ -50,12 +49,13 @@ public class AlgorithmServiceImpl implements IAlgorithmService{
         }
         str += path[data.num];
         result_.setPath(str);
+        algorithmMapper.insertResult_tx(result_);
 
         return result;
     }
 
     @Override
-    public Result getResult_dp(Data data) throws IOException {
+    public Result getResult_dp(Data data, int id) throws IOException {
         Result result = new Result();
         TSp tsp= new TSp();
         long startTime=System.currentTimeMillis();   //获取开始时间
@@ -66,11 +66,23 @@ public class AlgorithmServiceImpl implements IAlgorithmService{
         System.out.println("程序运行时间： " + time + "ms");
         result.path = path;
 
+        Result_ result_ = new Result_();
+        result_.setResult_id(id);
+        result_.setTime(time);
+        result_.setDistance(tsp.getDistance());
+        String str = "";
+        for(int i = 0; i < data.num; i++) {
+            str += path[i] + ",";
+        }
+        str += path[data.num];
+        result_.setPath(str);
+        algorithmMapper.insertResult_dp(result_);
+
         return result;
     }
 
     @Override
-    public Result getResult_sa(Data data) throws IOException {
+    public Result getResult_sa(Data data, int id) throws IOException {
         Result result = new Result();
         SA_TSP sa_tsp= new SA_TSP();
         long startTime=System.currentTimeMillis();   //获取开始时间
@@ -80,10 +92,23 @@ public class AlgorithmServiceImpl implements IAlgorithmService{
         result.time = time;
         System.out.println("程序运行时间： " + time + "ms");
         result.path = path;
+
+        Result_ result_ = new Result_();
+        result_.setResult_id(id);
+        result_.setTime(time);
+        result_.setDistance(sa_tsp.getDistance());
+        String str = "";
+        for(int i = 0; i < data.num; i++) {
+            str += path[i] + ",";
+        }
+        str += path[data.num];
+        result_.setPath(str);
+        algorithmMapper.insertResult_sa(result_);
+
         return result;
     }
 
-    public Result getResult_tabu(Data data) throws IOException {
+    public Result getResult_tabu(Data data, int id) throws IOException {
         Result result = new Result();
         Tabu tabu = new Tabu();
         long startTime=System.currentTimeMillis();   //获取开始时间
@@ -94,13 +119,22 @@ public class AlgorithmServiceImpl implements IAlgorithmService{
         System.out.println("程序运行时间： " + time + "ms");
         result.path = path;
 
-        ACO aco = new ACO();
-        aco.main(data);
+        Result_ result_ = new Result_();
+        result_.setResult_id(id);
+        result_.setTime(time);
+        result_.setDistance(tabu.getDistance());
+        String str = "";
+        for(int i = 0; i < data.num; i++) {
+            str += path[i] + ",";
+        }
+        str += path[data.num];
+        result_.setPath(str);
+        algorithmMapper.insertResult_tabu(result_);
 
         return result;
     }
 
-    public Result getResult_aco(Data data) throws IOException {
+    public Result getResult_aco(Data data, int id) throws IOException {
         Result result = new Result();
         ACO aco = new ACO();
         long startTime=System.currentTimeMillis();   //获取开始时间
@@ -110,6 +144,19 @@ public class AlgorithmServiceImpl implements IAlgorithmService{
         result.time = time;
         System.out.println("程序运行时间： " + time + "ms");
         result.path = path;
+
+        Result_ result_ = new Result_();
+        result_.setResult_id(id);
+        result_.setTime(time);
+        result_.setDistance(aco.getDistance());
+        String str = "";
+        for(int i = 0; i < data.num; i++) {
+            str += path[i] + ",";
+        }
+        str += path[data.num];
+        result_.setPath(str);
+        algorithmMapper.insertResult_aco(result_);
+
         return result;
     }
 

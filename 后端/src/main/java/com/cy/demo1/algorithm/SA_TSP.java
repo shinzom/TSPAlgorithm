@@ -174,4 +174,8 @@ public class SA_TSP {
         pathLen += dist[path[0]][path[path.length - 1]];
         return pathLen;
     }
+
+    public double getDistance() {
+        return bestEvaluation;
+    }
 }

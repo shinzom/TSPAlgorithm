@@ -218,5 +218,9 @@ public class ACO {
         return bestTour;
     }
 
+    public double getDistance() {
+        return bestLength;
+    }
+
 }
 
