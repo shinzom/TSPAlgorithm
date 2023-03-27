@@ -5,6 +5,7 @@ import com.cy.demo1.algorithm.Aco.ACO;
 import com.cy.demo1.data.Data;
 import com.cy.demo1.data.Result;
 import com.cy.demo1.data.Result2;
+import com.cy.demo1.entity.Result_;
 import com.cy.demo1.mapper.AlgorithmMapper;
 import com.cy.demo1.service.IAlgorithmService;
 import org.springframework.stereotype.Service;
@@ -21,15 +22,13 @@ public class AlgorithmServiceImpl implements IAlgorithmService{
     private AlgorithmMapper algorithmMapper;
 
     @Override
-    public Result getResult_tx(Data data) throws IOException {
-//       data = new Data();
-
-        //读入数据
-//        data.num = 3;
-//        data.x = new double[]{1,3,2};
-//        data.y = new double[]{1,3,2};
-
-        //调用算法，返回Data对象
+    public int getId(Data data){
+        algorithmMapper.insertResult(data);
+        int id = algorithmMapper.findMaxId();
+        return id;
+    }
+    @Override
+    public Result getResult_tx(Data data, int id) throws IOException {
         TxTsp txTsp = new TxTsp();
         Result result = new Result();
         long startTime=System.currentTimeMillis();   //获取开始时间
@@ -39,12 +38,24 @@ public class AlgorithmServiceImpl implements IAlgorithmService{
         result.time = time;
         System.out.println("程序运行时间： " + time + "ms");
         result.path = path;
+
+        Result_ result_ = new Result_();
+        result_.setResult_id(id);
+        result_.setTime(time);
+
+        result_.setDistance(txTsp.getDistance());
+        String str = "";
+        for(int i = 0; i < data.num; i++) {
+            str += path[i] + ",";
+        }
+        str += path[data.num];
+        result_.setPath(str);
+
         return result;
     }
 
     @Override
     public Result getResult_dp(Data data) throws IOException {
-        //调用算法，返回Data对象
         Result result = new Result();
         TSp tsp= new TSp();
         long startTime=System.currentTimeMillis();   //获取开始时间
@@ -60,7 +71,6 @@ public class AlgorithmServiceImpl implements IAlgorithmService{
 
     @Override
     public Result getResult_sa(Data data) throws IOException {
-        //调用算法，返回Data对象
         Result result = new Result();
         SA_TSP sa_tsp= new SA_TSP();
         long startTime=System.currentTimeMillis();   //获取开始时间
@@ -74,7 +84,6 @@ public class AlgorithmServiceImpl implements IAlgorithmService{
     }
 
     public Result getResult_tabu(Data data) throws IOException {
-        //调用算法，返回Data对象
         Result result = new Result();
         Tabu tabu = new Tabu();
         long startTime=System.currentTimeMillis();   //获取开始时间
@@ -92,7 +101,6 @@ public class AlgorithmServiceImpl implements IAlgorithmService{
     }
 
     public Result getResult_aco(Data data) throws IOException {
-        //调用算法，返回Data对象
         Result result = new Result();
         ACO aco = new ACO();
         long startTime=System.currentTimeMillis();   //获取开始时间

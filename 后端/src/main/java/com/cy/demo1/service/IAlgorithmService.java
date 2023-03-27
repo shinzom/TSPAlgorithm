@@ -8,8 +8,10 @@ import com.cy.demo1.data.Result2;
 import java.io.IOException;
 
 public interface IAlgorithmService {
+    int getId(Data data);
+
     //调用算法
-    Result getResult_tx(Data data) throws IOException;
+    Result getResult_tx(Data data, int id) throws IOException;
     Result getResult_dp(Data data) throws IOException;
 
     Result getResult_sa(Data data) throws IOException;

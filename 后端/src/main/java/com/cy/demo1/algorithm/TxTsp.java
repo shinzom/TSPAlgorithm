@@ -17,6 +17,8 @@ public class TxTsp {
 
     private int[] path;
 
+    private double dis;
+
 //    public TxTsp(int n) {
 //        cityNum = n;
 //    }
@@ -114,6 +116,7 @@ public class TxTsp {
         }
 //        System.out.println("路径:" + path);
         System.out.println("总距离为:" + s);
+        dis = s;
 
     }
 
@@ -169,5 +172,9 @@ public class TxTsp {
         solve();
 
         return path;
+    }
+
+    public double getDistance() {
+        return dis;
     }
 }
