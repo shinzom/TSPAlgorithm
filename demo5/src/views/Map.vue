@@ -1,58 +1,82 @@
 <template>
-    <el-container style="width:100%">
+    <el-container style="width:100%;height:100%;">
         <el-header>
             <div class="left_box">
-                <span>欢 迎</span>
+                <span>无 人 机 航 迹 规 划 算 法 研 究</span>
             </div>
         </el-header>
         <el-container style="height: 100%;">
             <el-aside>
-                <el-form-item label="菜单" style="margin-left: 12px;margin-top: 5px;"></el-form-item>
+                <el-form-item label="菜单" style="margin-left: 12px;"></el-form-item>
                 <div class="selectTitle">
                     <span>菜单</span>
                 </div>
 
-                <div>
-                    <div class="btn-group">
-                        <el-button style="background-color: #f4f2c7;width: 250px ;margin-left: 23px;" v-if="!isDrawing"
-                            @click="startDrawing">开始加点</el-button>
-                        <el-button style="background-color: #f4f2c7;width: 250px ;margin-left: 23px;" v-if="isDrawing"
-                            @click="stopDrawing">停止加点</el-button>
-                        <el-button style="background-color: #f4f2c7;width: 100px ;margin-left: 23px;margin-top: 5px;"
-                            @click="deleteLastPoint">删除上一个点</el-button>
-                        <el-button style="background-color: #f4f2c7;width: 100px ;margin-top: 5px;margin-left: 50px;"
-                            @click="clearMap">取消所有点</el-button>
-                    </div>
-                    <el-button style="background-color: #f4f2c7;width: 250px ;margin-left: 23px;margin-top: 5px;"
-                        @click="toggleLines">{{ isDrawingLines ? '隐藏连线' : '绘制点的连线' }}</el-button>
+                <div class="btn-group">
+                    <el-button style="background-color: #a2d8ca;width: 250px ;margin-left: 23px;height:30px;"
+                        v-if="!isDrawing" @click="startDrawing">开始加点</el-button>
+                    <el-button style="background-color: #a2d8ca;width: 250px ;margin-left: 23px;height:30px;"
+                        v-if="isDrawing" @click="stopDrawing">停止加点</el-button>
+                    <el-button
+                        style="background-color: #a2d8ca;width: 100px ;margin-left: 23px;margin-top: 5px;height:30px;"
+                        @click="deleteLastPoint">删除上一个点</el-button>
+                    <el-button
+                        style="background-color: #a2d8ca;width: 100px ;margin-top: 5px;margin-left: 50px;height:30px;"
+                        @click="clearMap">取消所有点</el-button>
                 </div>
 
-                <el-table ref="multipleTableRef" :data="tableData" style="width: 265px;margin-top: 5px;margin-left: 15px;"
-                    :default-sort="{ prop: 'distance', order: 'ascending' }" @selection-change="handleSelectionChange">
-                    <el-table-column type="selection" width="27" />
-                    <el-table-column prop="alg" label="算法" width="80" />
-                    <el-table-column prop="time" label="时间" sortable width="76" />
-                    <el-table-column prop="distance" label="距离" sortable width="100" />
-                </el-table>
-                <el-button style="background-color: #f4f2c7;width: 250px ;margin-left: 23px;margin-top: 5px;"
-                    @click="draw">绘制所选算法的路线</el-button>
+                <el-divider style="margin-top: 10px;margin-bottom: 3px;background-color: #1e9ee9;" />
 
-                <el-divider />
-                <span style="margin: 0 auto; color: #1b3366; ">多架无人机协同</span>
-                <el-form class="form_class" style="margin-top: 10px;">
-                    <el-form-item label="无人机数量:" label-width="140px">
-                        <el-input v-model="planeNum" placeholder="无人机数量" style="width:110px;"></el-input>
-                    </el-form-item>
-                    <el-form-item label="每架无人机距离限制:" label-width="165px">
-                        <el-input v-model="limit" placeholder="距离限制" style="width:110px;"></el-input>
-                    </el-form-item>
-                </el-form>
-                <el-button style="background-color: #f4f2c7;width: 250px ;margin-left: 23px;"
-                    @click="synAlg">绘制路线</el-button>
+                <el-collapse v-model="activeNames" class="collapse" @change="handleChange" style="margin-top: 10px;"
+                    accordion>
+                    <el-collapse-item title="单架无人机不同算法" name="1">
+                        <el-button
+                            style="background-color: #a2d8ca;width: 250px ;margin-left: 23px;margin-top: 5px;height:30px;"
+                            @click="toggleLines">{{ isDrawingLines ? '隐藏连线' : '绘制点的连线' }}</el-button>
+
+                        <el-table ref="multipleTableRef" :data="tableData"
+                            style="width: 290px;margin-top: 5px;margin-left: 5px;"
+                            :default-sort="{ prop: 'distance', order: 'ascending' }"
+                            @selection-change="handleSelectionChange">
+                            <el-table-column type="selection" width="27" />
+                            <el-table-column prop="alg" label="算法" width="80" />
+                            <el-table-column prop="time" label="时间/ms" sortable width="104" />
+                            <el-table-column prop="distance" label="距离/m" sortable width="97" />
+                        </el-table>
+                        <el-button
+                            style="background-color: #a2d8ca;width: 250px ;margin-left: 23px;margin-top: 5px;height:30px;"
+                            @click="draw">绘制所选算法的路线</el-button>
+                        <el-button
+                            style="background-color: #a2d8ca;width: 250px ;margin-left: 23px;margin-top: 5px;height:30px;"
+                            @click="history">查看历史算法对比记录</el-button>
+                    </el-collapse-item>
+
+                    <el-collapse-item title="多架无人机协同算法" name="2">
+                        <el-radio-group v-model="radioVal" style="margin-left: 75px;" text-color="green">
+                            <el-radio :label=true size="large">优先启动全部无人机</el-radio>
+                            <el-radio :label=false size="large">优先满足距离限制</el-radio>
+                        </el-radio-group>
+                        <el-form class="form_class" style="margin-top: 10px;">
+                            <el-form-item label="无人机数量:" label-width="140px">
+                                <el-input v-model="planeNum" placeholder="无人机数量" style="width:110px;"></el-input>
+                            </el-form-item>
+                            <el-form-item label="无人机续航:" label-width="140px">
+                                <el-input v-model="limit" placeholder="距离限制" style="width:110px;"></el-input>
+                            </el-form-item>
+                        </el-form>
+                        <el-button style="background-color: #a2d8ca;width: 250px ;margin-left: 23px;height:30px;"
+                            @click="synAlg">绘制路线</el-button>
+                        <el-table :data="mTSPData" style="width: 180px;margin-top: 5px;margin-left: 60px;"
+                            :default-sort="{ prop: 'distance_mtsp', order: 'ascending' }" :row-style="tableRowClassName">
+                            <el-table-column prop="no" label="序号" width="80" />
+                            <el-table-column prop="distance_mtsp" label="距离/m" sortable width="100" />
+                        </el-table>
+                    </el-collapse-item>
+                </el-collapse>
             </el-aside>
 
             <el-main>
-                <div id="map" style="width: 100%; height: 595px;margin-top: 30px;"></div>
+                <div id="map" style="width: 100%; height: 618px;margin-top: 30px;"></div>
 
             </el-main>
         </el-container>
@@ -65,7 +89,9 @@ import { dp } from '../utils/api'
 import { sa } from '../utils/api'
 import { tabu } from '../utils/api'
 import { aco } from '../utils/api'
+import { mtsp } from '../utils/api'
 import { toRaw } from '@vue/reactivity'
+import { fromPairs } from 'lodash'
 export default {
     data() {
         return {
@@ -108,6 +134,13 @@ export default {
             tableflag: true,
 
             multipleSelection: [],
+
+            //多架无人机
+            line: null,//画出的路线
+            radioVal: true,//选择优先条件
+            planeNum: 0,//无人机数量
+            limit: 0,//距离限制
+            mTSPData: [],//表格数据
         };
     },
 
@@ -177,6 +210,8 @@ export default {
             this.path_tabu = [];
             this.path_aco = [];
 
+            this.mTSPData = [];//多架无人机表格数据清空
+
             // 清空连线
             if (this.lines_tx) {
                 this.map.removeOverlay(this.lines_tx);
@@ -199,6 +234,12 @@ export default {
                 this.lines_aco = null;
             }
 
+            if (this.line) {
+                this.map.removeOverlay(this.line);
+                this.line = null;
+            }
+            this.map.clearOverlays();
+
             //将按钮设置为“绘制路线”
             this.isDrawingLines = false;
         },
@@ -218,7 +259,6 @@ export default {
                 //首先判断path是否为空，
                 //若tableflag = true,则path为空，则需发送请求，运行算法，并将表格的数据填充
                 //若tableflag = false，则不为空，则之前已经运行过算法，表格数据不变，只需绘制路线
-
                 if (this.tableflag) {
                     if (this.pointData.points.length < 2) {
                         return;
@@ -513,6 +553,7 @@ export default {
                 }
 
                 this.tableData = [];//清空表格数据
+                this.mTSPData = [];//多架无人机表格数据清空
                 this.tableflag = true;//标记变量改为true，需重新请求
                 // 清空连线
                 if (this.lines_tx) {
@@ -535,6 +576,21 @@ export default {
                     this.map.removeOverlay(this.lines_aco);
                     this.lines_aco = null;
                 }
+
+
+                this.map.clearOverlays();
+
+                for (let i = 0; i < this.pointData.points.length; i++) {
+                    const point = this.pointData.points[i];
+                    const circle1 = new BMap.Circle(point, 50, {
+                        strokeColor: "black",
+                        strokeWeight: 5,
+                        fillColor: "purple",
+                        fillOpacity: 0.2,
+                    });
+                    this.map.addOverlay(circle1);
+                }
+
                 //将按钮设置为“绘制路线”
                 this.isDrawingLines = false
             }
@@ -584,10 +640,110 @@ export default {
             this.isDrawingLines = true;
         },
 
+        //跳转到历史表单界面
+        history(){
+            this.$router.push('/Form');
+            //router.push('/Form');
+        },
+
         //多架无人机协同算法
         synAlg() {
+            this.mTSPData = [];//多架无人机表格数据清空
+            //清空连线
+            this.map.clearOverlays();
+            const circle1 = new BMap.Circle(this.pointData.points[0], 50, {
+                strokeColor: "black",
+                strokeWeight: 15,
+                fillColor: "green",
+                fillOpacity: 0.2,
+            });
+            this.map.addOverlay(circle1);
+            for (let i = 1; i < this.pointData.points.length; i++) {
+                const point = this.pointData.points[i];
+                const circle1 = new BMap.Circle(point, 50, {
+                    strokeColor: "black",
+                    strokeWeight: 5,
+                    fillColor: "purple",
+                    fillOpacity: 0.2,
+                });
+                this.map.addOverlay(circle1);
+            }
 
+            mtsp(this.pointData, this.planeNum, this.limit, this.radioVal).then(res => {
+                if (res.state == 200) {
+                    const crystal = toRaw(res.data);
+                    const paths = crystal.path;
+                    if (paths.length === 0) {
+                        this.$message({
+                            showClose: true,
+                            message: '当前无人机无法满足巡回条件！',
+                            type: 'error',
+                        });
+                        return;
+                    }
+
+                    let n = 1;
+                    paths.forEach((path, index) => {
+                        console.log(path.length);
+                        let pointsArray = [];
+                        let point = [];
+                        const points = this.pointData.points;
+
+                        for (let i = 0; i < path.length; i++) {
+                            point = points[path[i]];
+                            pointsArray.push(new BMap.Point(point.lng, point.lat));
+                        }
+                        // 自定义颜色
+                        const randomColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+                        this.line = new BMap.Polyline(pointsArray, {
+                            strokeColor: randomColor,
+                            strokeWeight: 2,
+                            strokeOpacity: 0.9,
+                        });
+
+                        let dis = 0
+                        for (let i = 0; i < pointsArray.length - 1; i++) {
+                            dis += this.map.getDistance(pointsArray[i], pointsArray[i + 1]);
+                        }
+                        this.mTSPData.push({ no: n, distance_mtsp: dis.toFixed(2), color_mtsp: randomColor });
+                        n++;
+
+
+                        // TODO: 我的画图直接加在这里了，想知道有什么办法可以让上面的按钮控制？
+                        this.map.addOverlay(this.line);
+
+
+                        // TODO: 显示各个无人机的飞行距离
+                        // 也许可以在表格里显示对应的颜色
+                    });
+                    this.isDrawingLines = true;
+                    this.$message({
+                        showClose: true,
+                        message: '多无人机路径规划成功！',
+                        type: 'success',
+                    });
+                } else {
+                    this.$message({
+                        showClose: true,
+                        message: '规划失败',
+                        type: 'error',
+                    });
+                }
+            }).catch(err => {
+                if (err.response) {
+                    console.log(err.response);
+                } else {
+                    console.log(err);
+                }
+            });
         },
+
+        tableRowClassName({ row, rowIndex }) {
+            console.log(this.mTSPData)
+            let styleObj = {};
+            styleObj.color = row.color_mtsp;
+            return styleObj;
+        }
     },
 }
 
@@ -597,7 +753,7 @@ export default {
 /* 头部布局*/
 .el-header {
     color: #0b0435;
-    background-color: #78cdd8;
+    background-color: #d7f8ff;
     display: flex;
     justify-content: space-between;
     width: 100%;
@@ -623,18 +779,28 @@ export default {
     color: #1b3366;
     display: flex;
     width: 250dp;
-    height: 50px;
+    height: 45px;
     font-size: 25px;
     justify-content: space-between;
     margin: 0 auto;
-    margin-top: 10px;
+    // margin-top: 10px;
 }
 
 .el-aside {
-    background-color: #78cdd8;
+    background-color: #d7f8ff; //#78cdd8;
     display: flex;
     flex-direction: column;
     width: "250px";
-    height: 90vh;
+    height: 95vh;
+}
+
+:deep .collapse .el-collapse-item__header {
+    border-bottom: 2px solid #1e9ee9;
+    background-color: #d7f8ff;
+}
+
+:deep .collapse .el-collapse-item__wrap {
+    border-bottom: 2px solid #1e9ee9;
+    background-color: #d7f8ff;
 }
 </style>
