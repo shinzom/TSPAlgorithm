@@ -34,5 +34,8 @@
         SELECT * FROM result_aco WHERE resultId = #{id}
     </select>
 
+    <select id="getData" resultType="com.cy.demo1.entity.Data_">
+        SELECT * FROM result WHERE resultId = #{id}
+    </select>
 
 </mapper>

@@ -1,5 +1,6 @@
 package com.cy.demo1.mapper;
 
+import com.cy.demo1.entity.Data_;
 import com.cy.demo1.entity.Result_;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,6 +31,16 @@ public class ShowMapperTests {
         System.out.println("time: " + result.getTime());
         System.out.println("distance: " + result.getDistance());
         System.out.println("path: " + result.getPath());
+    }
+
+    @Test
+    public void getData() {
+        Data_ data = showMapper.getData(4);
+//        System.out.println("resultId: " + data.getResult_id());
+//        System.out.println("number: " + data.getNumber());
+//        System.out.println("x: " + data.getX());
+//        System.out.println("y: " + data.getY());
+        System.out.println(data);
     }
 
 }

@@ -1,5 +1,6 @@
 package com.cy.demo1.service.impl;
 
+import com.cy.demo1.entity.Data_;
 import com.cy.demo1.entity.Result_;
 import com.cy.demo1.mapper.ShowMapper;
 import com.cy.demo1.service.IShowService;
@@ -25,5 +26,36 @@ public class ShowServiceImpl implements IShowService {
             result[i][4] = showMapper.getResult_aco(listId[i]);
         }
         return result;
+    }
+
+    @Override
+    public Result_ getResult(int id, int al) {
+        Result_ result;
+        switch (al){
+            case 0:
+                result = showMapper.getResult_tx(id);
+                break;
+            case 1:
+                result = showMapper.getResult_dp(id);
+                break;
+            case 2:
+                result = showMapper.getResult_sa(id);
+                break;
+            case 3:
+                result = showMapper.getResult_tabu(id);
+                break;
+            case 4:
+                result = showMapper.getResult_aco(id);
+                break;
+            default:
+                result = null;
+        }
+        return result;
+    }
+
+    @Override
+    public Data_ getData(int id) {
+        Data_ data = showMapper.getData(id);
+        return data;
     }
 }
