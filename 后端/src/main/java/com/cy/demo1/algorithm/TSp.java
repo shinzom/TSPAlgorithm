@@ -26,7 +26,11 @@ public class TSp{
 
         for(int i=0;i<citynumbers;i++) {
             for(int j=0;j<citynumbers;j++) {
-                distance[i][j]=Math.sqrt((x[i]-x[j])*(x[i]-x[j])+(y[i]-y[j])*(y[i]-y[j]));//计算欧式距离
+                double rij;
+                Point point1 = new Point(x[i], y[i]);
+                Point point2 = new Point(x[j], y[j]);
+                distance[i][j] = BaiduLocationUtils.getDistance(point1, point2);
+//                distance[i][j]=Math.sqrt((x[i]-x[j])*(x[i]-x[j])+(y[i]-y[j])*(y[i]-y[j]));//计算欧式距离
             }
         }
         int h=(int)Math.pow(2, citynumbers-1);

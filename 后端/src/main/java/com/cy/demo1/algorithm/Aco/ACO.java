@@ -1,5 +1,7 @@
 package com.cy.demo1.algorithm.Aco;
 
+import com.cy.demo1.algorithm.BaiduLocationUtils;
+import com.cy.demo1.algorithm.Point;
 import com.cy.demo1.data.Data;
 
 import java.io.BufferedReader;
@@ -71,17 +73,21 @@ public class ACO {
         for (int i = 0; i < cityNum - 1; i++) {//将所有城市间的直线距离存入一个二维数组（矩阵），这样以后可以直接通过 如： distance[1][0]  获得城市1到城市0的距离
             distance[i][i] = 0; // 对角线为0，即城市自己到自己的距离为0
             for (int j = i + 1; j < cityNum; j++) {//从i+1开始的目的是避免覆盖初始化的distance[i][i],后面用了distance[j][i] = distance[i][j]对称存入反向距离，因为该案例时对称城市（即dij与dji的距离看作相同）
-                double rij = Math
-                        .sqrt((x[i] - x[j]) * (x[i] - x[j]) + (y[i] - y[j])
-                                * (y[i] - y[j])) ;//欧式距离，其实就是根据坐标值算的二维直线距离
+//                double rij = Math
+//                        .sqrt((x[i] - x[j]) * (x[i] - x[j]) + (y[i] - y[j])
+//                                * (y[i] - y[j])) ;//欧式距离，其实就是根据坐标值算的二维直线距离
                 // 四舍五入，取整
 //                int tij = (int) Math.round(rij);//java取整函数Math.round(),将算得的城市直线距离rij转为不那么精确的整数型：  tij
 //                if (tij < rij) {
 //                    distance[i][j] = tij + 1;
 //                    distance[j][i] = distance[i][j];//因为是对称城市
 //                } else {
-                    distance[i][j] = rij;
-                    distance[j][i] = distance[i][j];
+                double rij;
+                Point point1 = new Point(x[i], y[i]);
+                Point point2 = new Point(x[j], y[j]);
+                rij = BaiduLocationUtils.getDistance(point1, point2);
+                distance[i][j] = rij;
+                distance[j][i] = distance[i][j];
 //                }//这一段的做法是将取整到的rij向上取整存入距离矩阵（不那么必要）
             }
         }

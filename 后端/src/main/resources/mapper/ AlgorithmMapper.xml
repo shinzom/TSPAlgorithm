@@ -36,19 +36,19 @@
     </insert>
 
     <insert id="insertResult_tabu">
-        INSERT INTO result_dp VALUES(
+        INSERT INTO result_tabu VALUES(
         #{result_id}, #{time}, #{distance}, #{path}
         )
     </insert>
 
     <insert id="insertResult_sa">
-        INSERT INTO result_dp VALUES(
+        INSERT INTO result_sa VALUES(
         #{result_id}, #{time}, #{distance}, #{path}
         )
     </insert>
 
     <insert id="insertResult_aco">
-        INSERT INTO result_dp VALUES(
+        INSERT INTO result_aco VALUES(
         #{result_id}, #{time}, #{distance}, #{path}
         )
     </insert>

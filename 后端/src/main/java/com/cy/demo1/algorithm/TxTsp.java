@@ -50,9 +50,10 @@ public class TxTsp {
         for (int i = 0; i < cityNum - 1; i++) {
             distance[i][i] = 0; // 对角线为0
             for (int j = i + 1; j < cityNum; j++) {
-                double rij = Math
-                        .sqrt(((x[i] - x[j]) * (x[i] - x[j]) + (y[i] - y[j])
-                                * (y[i] - y[j])) );
+//                double rij = Math
+//                        .sqrt(((x[i] - x[j]) * (x[i] - x[j]) + (y[i] - y[j])
+//                                * (y[i] - y[j])) );
+
 //                // 四舍五入，取整
 //                int tij = (int) Math.round(rij);
 //                if (tij < rij) {
@@ -60,8 +61,12 @@ public class TxTsp {
 //                    distance[j][i] = distance[i][j];
 //                } else {
 //                    distance[i][j] = tij;
-                    distance[i][j] = rij;
-                    distance[j][i] = distance[i][j];
+                double rij;
+                Point point1 = new Point(x[i], y[i]);
+                Point point2 = new Point(x[j], y[j]);
+                rij = BaiduLocationUtils.getDistance(point1, point2);
+                distance[i][j] = rij;
+                distance[j][i] = distance[i][j];
 //                }
 //                System.out.println(i + "," + j + ":" + distance[i][j]);
             }
