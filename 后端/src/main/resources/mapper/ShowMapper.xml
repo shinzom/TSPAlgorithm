@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--namespace属性：指定映射接口-->
+<mapper namespace="com.cy.demo1.mapper.ShowMapper">
+
+    <!--id属性:映射接口中方法名称
+        useGeneratedKeys属性：开启某个值的递增
+        keyProperty属性：哪个主键进行递增
+    -->
+    <select id="listId" resultType="Integer">
+        SELECT resultId FROM result
+    </select>
+
+    <select id="getResult_tx" resultType="com.cy.demo1.entity.Result_">
+        SELECT * FROM result_tx WHERE resultId = #{id}
+    </select>
+
+    <select id="getResult_dp" resultType="com.cy.demo1.entity.Result_">
+        SELECT * FROM result_dp WHERE resultId = #{id}
+    </select>
+
+    <select id="getResult_sa" resultType="com.cy.demo1.entity.Result_">
+        SELECT * FROM result_sa WHERE resultId = #{id}
+    </select>
+
+    <select id="getResult_tabu" resultType="com.cy.demo1.entity.Result_">
+        SELECT * FROM result_tabu WHERE resultId = #{id}
+    </select>
+
+    <select id="getResult_aco" resultType="com.cy.demo1.entity.Result_">
+        SELECT * FROM result_aco WHERE resultId = #{id}
+    </select>
+
+
+</mapper>
