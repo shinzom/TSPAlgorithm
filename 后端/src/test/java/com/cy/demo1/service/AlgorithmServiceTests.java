@@ -25,11 +25,11 @@ public class AlgorithmServiceTests {
         data.num = 10;
         data.x = new double[]{1,2,3,4,5,6,7,8,9,10};
         data.y = new double[]{1,2,3,4,5,6,7,8,9,10};
-        Result2 result = algorithmService.getResult_mtsp(data,3,250);
-//        Result result = algorithmService.getResult_aco(data);
-//        System.out.println("time:" + result.time);
-//        for(int i = 0; i <= data.num; i++) {
-//            System.out.print(result.path[i] + " ");
-//        }
+//        Result2 result = algorithmService.getResult_mtsp(data,3,250, false);
+        Result result = algorithmService.getResult_tx(data, 4);
+        System.out.println("time:" + result.time);
+        for(int i = 0; i <= data.num; i++) {
+            System.out.print(result.path[i] + " ");
+        }
     }
 }

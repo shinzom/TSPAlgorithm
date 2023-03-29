@@ -160,7 +160,12 @@ public class SA_TSP {
     public double getDistance(double[] place1, double[] place2) {
         // 伪欧氏距离在根号内除以了一个10
 //        return Math.sqrt((Math.pow(place1[0] - place2[0], 2) + Math.pow(place1[1] - place2[1], 2)) / 10.0);
-        return Math.sqrt((Math.pow(place1[0] - place2[0], 2) + Math.pow(place1[1] - place2[1], 2)));
+//        return Math.sqrt((Math.pow(place1[0] - place2[0], 2) + Math.pow(place1[1] - place2[1], 2)));
+        double rij;
+        Point point1 = new Point(place1[0], place1[1]);
+        Point point2 = new Point(place2[0], place2[1]);
+        rij = BaiduLocationUtils.getDistance(point1, point2);
+        return rij;
     }
 
     // 评价函数
@@ -173,5 +178,9 @@ public class SA_TSP {
         // 然后再加上返回起点的路程
         pathLen += dist[path[0]][path[path.length - 1]];
         return pathLen;
+    }
+
+    public double getDistance() {
+        return bestEvaluation;
     }
 }
