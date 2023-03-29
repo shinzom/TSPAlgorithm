@@ -141,3 +141,17 @@ export function reshow(id_select,alg_select) {
     }
   })
 }
+
+//导出文件
+export function kml(id_export,alg_export,fileName) {
+  console.log('导出文件')
+  return request({
+    url: '/get_kml/',
+    method: 'post',
+    params:{
+      id: id_export,
+      al: alg_export,
+      filename:fileName,
+    }
+  })
+}

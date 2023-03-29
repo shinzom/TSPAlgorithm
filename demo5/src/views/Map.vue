@@ -23,8 +23,6 @@
                     <el-button
                         style="background-color: #a2d8ca;width: 100px ;margin-top: 5px;margin-left: 50px;height:30px;"
                         @click="clearMap">取消所有点</el-button>
-                    <!-- <el-button style="background-color: #a2d8ca;width: 250px ;margin-left: 23px;height:30px;"
-                        @click="exportPath">导出路线</el-button> -->
                 </div>
 
                 <el-divider style="margin-top: 10px;margin-bottom: 3px;background-color: #1e9ee9;" />
@@ -73,6 +71,11 @@
                             <el-table-column prop="no" label="序号" width="80" />
                             <el-table-column prop="distance_mtsp" label="距离/m" sortable width="100" />
                         </el-table>
+                    </el-collapse-item>
+
+                    <el-collapse-item title="设置无人机禁飞区算法" name="3">
+
+
                     </el-collapse-item>
                 </el-collapse>
             </el-aside>
@@ -312,11 +315,6 @@ export default {
 
             //将按钮设置为“绘制路线”
             this.isDrawingLines = false;
-        },
-
-        //导出路线
-        exportPath(){
-            
         },
 
         toggleLines() {
