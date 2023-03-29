@@ -15,6 +15,7 @@ import Map from '../views/Map.vue'
 
 const routes = [
     {path:'/',component:Map},
+    {path:'/:id_select/:alg_select',component:Map},
     {path:'/Form',component:Form},
 ]
 const router = createRouter({

@@ -1,5 +1,22 @@
 import request from "./request";
 
+//获取id
+export function getid(pointData) {
+  console.log('getid')
+  return request({
+    // url: '/callAlgorithm/'+num+'/'+points,
+    url: '/get_id/',
+    method: 'post',
+    params:{
+      num:pointData.num,
+      //xy:pointData.points,
+      x:JSON.stringify(pointData.x),
+      y:JSON.stringify(pointData.y),
+      
+    }
+  })
+}
+
 //贪心算法
 export function tx(pointData) {
   console.log('tx')
@@ -12,6 +29,7 @@ export function tx(pointData) {
       //xy:pointData.points,
       x:JSON.stringify(pointData.x),
       y:JSON.stringify(pointData.y),
+      id:pointData.alg_id,
     }
   })
 }
@@ -28,6 +46,7 @@ export function dp(pointData) {
       //xy:pointData.points,
       x:JSON.stringify(pointData.x),
       y:JSON.stringify(pointData.y),
+      id:pointData.alg_id,
     }
   })
 }
@@ -44,6 +63,7 @@ export function sa(pointData) {
       //xy:pointData.points,
       x:JSON.stringify(pointData.x),
       y:JSON.stringify(pointData.y),
+      id:pointData.alg_id,
     }
   })
 }
@@ -60,6 +80,7 @@ export function tabu(pointData) {
       //xy:pointData.points,
       x:JSON.stringify(pointData.x),
       y:JSON.stringify(pointData.y),
+      id:pointData.alg_id,
     }
   })
 }
@@ -76,6 +97,7 @@ export function aco(pointData) {
       //xy:pointData.points,
       x:JSON.stringify(pointData.x),
       y:JSON.stringify(pointData.y),
+      id:pointData.alg_id,
     }
   })
 }
@@ -93,6 +115,29 @@ export function mtsp(pointData, inputDroneNumber, inputDroneRange,radioVal) {
       planeNum: inputDroneNumber,
       limit: inputDroneRange,
       radioVal: radioVal,
+      id:pointData.alg_id,
+    }
+  })
+}
+
+//历史记录图表
+export function show() {
+  console.log('showTable')
+  return request({
+    url: '/show/',
+    method: 'post',
+  })
+}
+
+//复现
+export function reshow(id_select,alg_select) {
+  console.log('reshow')
+  return request({
+    url: '/get_data/',
+    method: 'post',
+    params:{
+      id: id_select,
+      al: alg_select,
     }
   })
 }
