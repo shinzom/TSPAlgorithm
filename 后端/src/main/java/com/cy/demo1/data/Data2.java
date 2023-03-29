@@ -1,7 +1,7 @@
 package com.cy.demo1.data;
 
 public class Data2 {
-    public int[] x;
-    public int[] y;
+    public double[] x;
+    public double[] y;
     public int[] path;
 }

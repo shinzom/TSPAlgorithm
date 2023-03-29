@@ -2,11 +2,13 @@ package com.cy.demo1.service.impl;
 
 import com.cy.demo1.entity.Data_;
 import com.cy.demo1.entity.Result_;
+import com.cy.demo1.kml.KmlUtils;
 import com.cy.demo1.mapper.ShowMapper;
 import com.cy.demo1.service.IShowService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 
 @Service
 public class ShowServiceImpl implements IShowService {
@@ -57,5 +59,15 @@ public class ShowServiceImpl implements IShowService {
     public Data_ getData(int id) {
         Data_ data = showMapper.getData(id);
         return data;
+    }
+
+    @Override
+    public void getKml(double[] x, double[] y, int[] path, String filename) throws IOException {
+        String str = "";
+        for(int i = 0; i < path.length - 1; i++) {
+            str = str + x[path[i]] + "," + y[path[i]] + "," + "100" + " ";
+        }
+        str = str + x[path[path.length - 1]] + "," + y[path[path.length - 1]] + "," + "100";
+        KmlUtils.setTravelsKml(str, filename);
     }
 }
