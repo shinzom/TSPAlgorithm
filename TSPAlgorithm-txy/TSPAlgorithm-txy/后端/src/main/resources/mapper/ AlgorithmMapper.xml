@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--namespace属性：指定映射接口-->
+<mapper namespace="com.cy.demo1.mapper.AlgorithmMapper">
+
+    <!--id属性:映射接口中方法名称
+        useGeneratedKeys属性：开启某个值的递增
+        keyProperty属性：哪个主键进行递增
+    -->
+
+    <insert id="insertResult">
+        INSERT INTO result(
+            number, x, y
+        ) VALUES(
+            #{num}, #{strx}, #{stry}
+        )
+    </insert>
+
+    <select id="findMaxId" resultType="Integer">
+        SELECT MAX(resultId) FROM result
+    </select>
+
+    <insert id="insertResult_tx">
+        INSERT INTO result_tx VALUES(
+            #{result_id}, #{time}, #{distance}, #{path}
+        )
+    </insert>
+
+    <insert id="insertResult_dp">
+        INSERT INTO result_dp VALUES(
+        #{result_id}, #{time}, #{distance}, #{path}
+        )
+    </insert>
+
+    <insert id="insertResult_tabu">
+        INSERT INTO result_tabu VALUES(
+        #{result_id}, #{time}, #{distance}, #{path}
+        )
+    </insert>
+
+    <insert id="insertResult_sa">
+        INSERT INTO result_sa VALUES(
+        #{result_id}, #{time}, #{distance}, #{path}
+        )
+    </insert>
+
+    <insert id="insertResult_aco">
+        INSERT INTO result_aco VALUES(
+        #{result_id}, #{time}, #{distance}, #{path}
+        )
+    </insert>
+
+</mapper>
