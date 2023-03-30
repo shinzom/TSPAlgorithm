@@ -74,7 +74,28 @@
                     </el-collapse-item>
 
                     <el-collapse-item title="设置无人机禁飞区算法" name="3">
+                        <el-radio-group v-model="noflyPriority" style="margin-left: 75px;" text-color="green">
+                            <el-radio :label=true size="large">优先启动全部无人机</el-radio>
+                            <el-radio :label=false size="large">优先满足距离限制</el-radio>
+                        </el-radio-group>
+                        <el-form class="form_class" style="margin-top: 10px;">
+                            <el-form-item label="无人机数量:" label-width="140px">
+                                <el-input v-model="planeNumNofly" placeholder="无人机数量" style="width:110px;"></el-input>
+                            </el-form-item>
+                            <el-form-item label="无人机续航:" label-width="140px">
+                                <el-input v-model="limitNofly" placeholder="距离限制" style="width:110px;"></el-input>
+                            </el-form-item>
+                        </el-form>
 
+                        <el-button
+                            style="background-color: #a2d8ca;width: 250px ;margin-left: 23px;height:30px;margin-top: 5px;"
+                            v-if="!isDrawingNofly" @click="startDrawingNofly(e)">开始绘制禁飞区</el-button>
+                        <el-button
+                            style="background-color: #a2d8ca;width: 250px ;margin-left: 23px;height:30px;margin-top: 5px;"
+                            v-if="isDrawingNofly" @click="stopDrawingNofly">停止绘制禁飞区</el-button>
+                        <el-button
+                            style="background-color: #a2d8ca;width: 250px ;margin-left: 23px;height:30px;margin-top: 5px;"
+                            @click="nofly">绘制路线</el-button>
 
                     </el-collapse-item>
                 </el-collapse>
@@ -152,6 +173,23 @@ export default {
             planeNum: 0,//无人机数量
             limit: 0,//距离限制
             mTSPData: [],//表格数据
+
+            //禁飞区
+            noflyPriority: true,//选择优先条件
+            planeNumNofly: 0,//无人机数量
+            limitNofly: 0,//距离限制
+            isDrawingNofly: false,//是否绘制禁飞区
+            noflyData: {
+                num: 0,
+                points: [],
+                x: [],
+                y: [],
+            },
+            //drawingManager: null,
+            overlays: [],
+            polygonPath:[],
+            noflyNum: 0,
+            totalCricles: [[]],
         };
     },
 
@@ -192,6 +230,52 @@ export default {
                     this.circles.push(circle);
                     console.log("点击点的经度：" + point.lng + "，纬度：" + point.lat);
                 }
+                //else if (this.isDrawingNofly) {
+                // 创建圆
+                // const pointNofly = e.point;
+                // const circleNofly = new BMap.Circle(pointNofly, 50, {
+                //     strokeColor: "red",
+                //     strokeWeight: 5,
+                //     fillColor: "blue",
+                //     fillOpacity: 0.2,
+                // });
+                // this.map.addOverlay(circleNofly);
+                // this.noflyData.points.push({ lng: point.lng, lat: point.lat });
+                // this.noflytData.x.push(point.lng);
+                // this.noflyData.y.push(point.lat);
+                // this.noflyData.num++;
+                // this.circlesNofly.push(circle);
+                // console.log("禁飞区点的经度：" + point.lng + "，纬度：" + point.lat);
+
+                //     let overlays = [];
+                //     let overlaycomplete = function (e) {
+                //         overlays.push(e.overlay);
+                //     };
+                //     let styleOptions = {
+                //         strokeColor: "red", //边线颜色。
+                //         fillColor: "red", //填充颜色。当参数为空时，圆形将没有填充效果。
+                //         strokeWeight: 3, //边线的宽度，以像素为单位。
+                //         strokeOpacity: 0.8, //边线透明度，取值范围0 - 1。
+                //         fillOpacity: 0.6, //填充的透明度，取值范围0 - 1。
+                //         strokeStyle: 'solid' //边线的样式，solid或dashed。
+                //     }
+                //     //实例化鼠标绘制工具
+                //     this.drawingManager = new BMapLib.DrawingManager(this.map, {
+                //         isOpen: false, //是否开启绘制模式
+                //         // enableDrawingTool: true, //是否显示工具栏
+                //         drawingToolOptions: {
+                //             anchor: BMAP_ANCHOR_TOP_RIGHT, //位置
+                //             offset: new BMap.Size(5, 5), //偏离值
+                //         },
+                //         circleOptions: styleOptions, //圆的样式
+                //         polylineOptions: styleOptions, //线的样式
+                //         polygonOptions: styleOptions, //多边形的样式
+                //         rectangleOptions: styleOptions //矩形的样式
+                //     });
+                //     //添加鼠标绘制工具监听事件，用于获取绘制结果
+                //     this.drawingManager.addEventListener('overlaycomplete', overlaycomplete);
+
+                // }
             });
 
             if (this.$route.params.id_select) {
@@ -259,6 +343,7 @@ export default {
         startDrawing() {
             // 开始加点
             this.isDrawing = true;
+            this.isDrawingNofly = false;
         },
         stopDrawing() {
             // 停止加点
@@ -830,6 +915,99 @@ export default {
             let styleObj = {};
             styleObj.color = row.color_mtsp;
             return styleObj;
+        },
+
+        //开始绘制禁飞区
+        // startDrawingNofly() {
+        //     this.polygonPath.editing = true;
+        //     this.isDrawing = false;
+        // },
+
+        startDrawingNofly(e) {
+            this.isDrawingNofly = true;
+             this.isDrawing = false;
+            var styleOptions = {
+                strokeColor: '#5E87DB', // 边线颜色
+                fillColor: '#5E87DB', // 填充颜色。当参数为空时，圆形没有填充颜色
+                strokeWeight: 2, // 边线宽度，以像素为单位
+                strokeOpacity: 1, // 边线透明度，取值范围0-1
+                fillOpacity: 0.2 // 填充透明度，取值范围0-1
+            };
+            var labelOptions = {
+                borderRadius: '2px',
+                background: '#FFFBCC',
+                border: '1px solid #E1E1E1',
+                color: '#703A04',
+                fontSize: '12px',
+                letterSpacing: '0',
+                padding: '5px'
+            };
+
+            // 实例化鼠标绘制工具
+            var drawingManager = new BMapGLLib.DrawingManager(this.map, {
+                // isOpen: true,        // 是否开启绘制模式
+                enableCalculate: false, // 绘制是否进行测距测面
+                enableSorption: true, // 是否开启边界吸附功能
+                sorptiondistance: 20, // 边界吸附距离
+                circleOptions: styleOptions, // 圆的样式
+                polylineOptions: styleOptions, // 线的样式
+                polygonOptions: styleOptions, // 多边形的样式
+                rectangleOptions: styleOptions, // 矩形的样式
+                labelOptions: labelOptions // label样式
+            });
+
+            var arr = document.getElementsByClassName('bmap-btn');
+            for (var i = 0; i < arr.length; i++) {
+                arr[i].style.backgroundPositionY = '0';
+            }
+            e.currentTarget.style.backgroundPositionY = '-52px';
+
+            var drawingType = BMAP_DRAWING_POLYLINE;
+            // 进行绘制
+            if (drawingManager._isOpen && drawingManager.getDrawingMode() === drawingType) {
+                drawingManager.close();
+            } else {
+                drawingManager.setDrawingMode(drawingType);
+                drawingManager.open();
+            }
+            drawingManager.addEventListener('overlaycomplete', this.overlaycomplete);
+        },
+        //获坐标集
+        overlaycomplete(e) {
+            let self = this
+            //清除底层图案
+            //this.map.clearOverlays();
+            //画多边形
+            //this.clearData();
+            this.polygonPath = e.overlay.getPath(); //获取多边形路径点
+            //this.drawingManager.close();
+            //增加多边形，
+            //this.polygon = new BMap.Polygon(this.polygonPath, { strokeColor: 'red', strokeWeight: 1, strokeOpacity: 0.85 });
+
+            this.map.addOverlay(this.polygon);
+            //编辑多边形
+            //this.polygon.enableEditing();
+
+            console.log(this.polygonPath)
+        },
+        //清空坐标点
+        clearData() {
+            for (var i = 0; i < this.overlays.length; i++) {
+                this.map.removeOverlay(overlays[i]);
+            }
+            this.overlays.length = 0;
+        },
+
+
+
+        //停止绘制禁飞区
+        stopDrawingNofly() {
+            this.isDrawingNofly = false;
+        },
+
+        //禁飞区算法路线绘制
+        nofly() {
+
         }
     },
 }
