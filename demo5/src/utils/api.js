@@ -115,8 +115,11 @@ export function mtsp(pointData, inputDroneNumber, inputDroneRange,radioVal) {
       planeNum: inputDroneNumber,
       limit: inputDroneRange,
       radioVal: radioVal,
-      id:pointData.alg_id,
-    }
+    },
+    data: null, // 注意请求体写在这里
+    headers: {
+      'Content-Type': 'application/json',
+    },
   })
 }
 
@@ -153,5 +156,26 @@ export function kml(id_export,alg_export,fileName) {
       al: alg_export,
       filename:fileName,
     }
+  })
+}
+
+//禁飞区
+export function nofly(pointData, inputDroneNumber, inputDroneRange,radioVal,noflyData) {
+  console.log('nofly')
+  return request({
+    url: '/callAlgorithm_mtsp/',
+    method: 'post',
+    params:{
+      num: pointData.num,
+      x: JSON.stringify(pointData.x),
+      y: JSON.stringify(pointData.y),
+      planeNum: inputDroneNumber,
+      limit: inputDroneRange,
+      radioVal: radioVal,
+    },
+    data: noflyData, // 注意请求体写在这里
+    headers: {
+      'Content-Type': 'application/json',
+    },
   })
 }

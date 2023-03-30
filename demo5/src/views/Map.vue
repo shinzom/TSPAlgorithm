@@ -27,8 +27,7 @@
 
                 <el-divider style="margin-top: 10px;margin-bottom: 3px;background-color: #1e9ee9;" />
 
-                <el-collapse v-model="activeNames" class="collapse" @change="handleChange" style="margin-top: 10px;"
-                    accordion>
+                <el-collapse class="collapse" style="margin-top: 10px;" accordion>
                     <el-collapse-item title="单架无人机不同算法" name="1">
                         <el-button
                             style="background-color: #a2d8ca;width: 250px ;margin-left: 23px;margin-top: 5px;height:30px;"
@@ -89,7 +88,7 @@
 
                         <el-button
                             style="background-color: #a2d8ca;width: 250px ;margin-left: 23px;height:30px;margin-top: 5px;"
-                            v-if="!isDrawingNofly" @click="startDrawingNofly(e)">开始绘制禁飞区</el-button>
+                            v-if="!isDrawingNofly" @click="startDrawingNofly">开始绘制禁飞区</el-button>
                         <el-button
                             style="background-color: #a2d8ca;width: 250px ;margin-left: 23px;height:30px;margin-top: 5px;"
                             v-if="isDrawingNofly" @click="stopDrawingNofly">停止绘制禁飞区</el-button>
@@ -118,6 +117,7 @@ import { tabu } from '../utils/api'
 import { aco } from '../utils/api'
 import { mtsp } from '../utils/api'
 import { reshow } from '../utils/api'
+import { nofly } from '../utils/api'
 import { toRaw } from '@vue/reactivity'
 
 export default {
@@ -179,17 +179,16 @@ export default {
             planeNumNofly: 0,//无人机数量
             limitNofly: 0,//距离限制
             isDrawingNofly: false,//是否绘制禁飞区
-            noflyData: {
+            //一个禁飞区的数据传输的存储
+            oneNofly: {
                 num: 0,
-                points: [],
                 x: [],
                 y: [],
-            },
-            //drawingManager: null,
-            overlays: [],
-            polygonPath:[],
-            noflyNum: 0,
-            totalCricles: [[]],
+            },    
+            noflyData:[],//所有禁飞区的数据
+            noflyNum: 0,//禁飞区数量
+            polygonPoints: [],//一个禁飞区的点集
+            
         };
     },
 
@@ -202,6 +201,7 @@ export default {
         };
         window.initMap = this.initMap;
         document.body.appendChild(script);
+        // this.initMap();
     },
     methods: {
         initMap() {
@@ -230,52 +230,23 @@ export default {
                     this.circles.push(circle);
                     console.log("点击点的经度：" + point.lng + "，纬度：" + point.lat);
                 }
-                //else if (this.isDrawingNofly) {
-                // 创建圆
-                // const pointNofly = e.point;
-                // const circleNofly = new BMap.Circle(pointNofly, 50, {
-                //     strokeColor: "red",
-                //     strokeWeight: 5,
-                //     fillColor: "blue",
-                //     fillOpacity: 0.2,
-                // });
-                // this.map.addOverlay(circleNofly);
-                // this.noflyData.points.push({ lng: point.lng, lat: point.lat });
-                // this.noflytData.x.push(point.lng);
-                // this.noflyData.y.push(point.lat);
-                // this.noflyData.num++;
-                // this.circlesNofly.push(circle);
-                // console.log("禁飞区点的经度：" + point.lng + "，纬度：" + point.lat);
-
-                //     let overlays = [];
-                //     let overlaycomplete = function (e) {
-                //         overlays.push(e.overlay);
-                //     };
-                //     let styleOptions = {
-                //         strokeColor: "red", //边线颜色。
-                //         fillColor: "red", //填充颜色。当参数为空时，圆形将没有填充效果。
-                //         strokeWeight: 3, //边线的宽度，以像素为单位。
-                //         strokeOpacity: 0.8, //边线透明度，取值范围0 - 1。
-                //         fillOpacity: 0.6, //填充的透明度，取值范围0 - 1。
-                //         strokeStyle: 'solid' //边线的样式，solid或dashed。
-                //     }
-                //     //实例化鼠标绘制工具
-                //     this.drawingManager = new BMapLib.DrawingManager(this.map, {
-                //         isOpen: false, //是否开启绘制模式
-                //         // enableDrawingTool: true, //是否显示工具栏
-                //         drawingToolOptions: {
-                //             anchor: BMAP_ANCHOR_TOP_RIGHT, //位置
-                //             offset: new BMap.Size(5, 5), //偏离值
-                //         },
-                //         circleOptions: styleOptions, //圆的样式
-                //         polylineOptions: styleOptions, //线的样式
-                //         polygonOptions: styleOptions, //多边形的样式
-                //         rectangleOptions: styleOptions //矩形的样式
-                //     });
-                //     //添加鼠标绘制工具监听事件，用于获取绘制结果
-                //     this.drawingManager.addEventListener('overlaycomplete', overlaycomplete);
-
-                // }
+                else if (this.isDrawingNofly) {
+                    // 创建圆
+                    const pointNofly = e.point;
+                    const circleNofly = new BMap.Circle(pointNofly, 50, {
+                        strokeColor: "red",
+                        strokeWeight: 5,
+                        fillColor: "blue",
+                        fillOpacity: 0.2,
+                    });
+                    this.map.addOverlay(circleNofly);
+                    this.oneNofly.x.push(pointNofly.lng);
+                    this.oneNofly.y.push(pointNofly.lat);
+                    this.oneNofly.num++;
+                    //this.circlesNofly.push(circle);
+                    console.log("禁飞区点的经度：" + pointNofly.lng + "，纬度：" + pointNofly.lat);
+                    this.polygonPoints.push({ lng: pointNofly.lng, lat: pointNofly.lat });
+                }
             });
 
             if (this.$route.params.id_select) {
@@ -918,97 +889,100 @@ export default {
         },
 
         //开始绘制禁飞区
-        // startDrawingNofly() {
-        //     this.polygonPath.editing = true;
-        //     this.isDrawing = false;
-        // },
-
-        startDrawingNofly(e) {
+        startDrawingNofly() {
             this.isDrawingNofly = true;
-             this.isDrawing = false;
-            var styleOptions = {
-                strokeColor: '#5E87DB', // 边线颜色
-                fillColor: '#5E87DB', // 填充颜色。当参数为空时，圆形没有填充颜色
-                strokeWeight: 2, // 边线宽度，以像素为单位
-                strokeOpacity: 1, // 边线透明度，取值范围0-1
-                fillOpacity: 0.2 // 填充透明度，取值范围0-1
-            };
-            var labelOptions = {
-                borderRadius: '2px',
-                background: '#FFFBCC',
-                border: '1px solid #E1E1E1',
-                color: '#703A04',
-                fontSize: '12px',
-                letterSpacing: '0',
-                padding: '5px'
-            };
-
-            // 实例化鼠标绘制工具
-            var drawingManager = new BMapGLLib.DrawingManager(this.map, {
-                // isOpen: true,        // 是否开启绘制模式
-                enableCalculate: false, // 绘制是否进行测距测面
-                enableSorption: true, // 是否开启边界吸附功能
-                sorptiondistance: 20, // 边界吸附距离
-                circleOptions: styleOptions, // 圆的样式
-                polylineOptions: styleOptions, // 线的样式
-                polygonOptions: styleOptions, // 多边形的样式
-                rectangleOptions: styleOptions, // 矩形的样式
-                labelOptions: labelOptions // label样式
-            });
-
-            var arr = document.getElementsByClassName('bmap-btn');
-            for (var i = 0; i < arr.length; i++) {
-                arr[i].style.backgroundPositionY = '0';
-            }
-            e.currentTarget.style.backgroundPositionY = '-52px';
-
-            var drawingType = BMAP_DRAWING_POLYLINE;
-            // 进行绘制
-            if (drawingManager._isOpen && drawingManager.getDrawingMode() === drawingType) {
-                drawingManager.close();
-            } else {
-                drawingManager.setDrawingMode(drawingType);
-                drawingManager.open();
-            }
-            drawingManager.addEventListener('overlaycomplete', this.overlaycomplete);
+            this.isDrawing = false;
         },
-        //获坐标集
-        overlaycomplete(e) {
-            let self = this
-            //清除底层图案
-            //this.map.clearOverlays();
-            //画多边形
-            //this.clearData();
-            this.polygonPath = e.overlay.getPath(); //获取多边形路径点
-            //this.drawingManager.close();
-            //增加多边形，
-            //this.polygon = new BMap.Polygon(this.polygonPath, { strokeColor: 'red', strokeWeight: 1, strokeOpacity: 0.85 });
-
-            this.map.addOverlay(this.polygon);
-            //编辑多边形
-            //this.polygon.enableEditing();
-
-            console.log(this.polygonPath)
-        },
-        //清空坐标点
-        clearData() {
-            for (var i = 0; i < this.overlays.length; i++) {
-                this.map.removeOverlay(overlays[i]);
-            }
-            this.overlays.length = 0;
-        },
-
-
 
         //停止绘制禁飞区
         stopDrawingNofly() {
             this.isDrawingNofly = false;
+            this.noflyData.push(JSON.parse(JSON.stringify(this.oneNofly)));
+            console.log(this.noflyData);
+            const polygon = new BMap.Polygon(this.polygonPoints, {
+                strokeColor: "red",
+                strokeWeight: 2,
+                strokeOpacity: 0.5,
+                fillColor: "pink",
+                fillOpacity: 0.5,
+            });
+
+            // 将多边形对象添加到地图上
+            this.map.addOverlay(polygon);
+            console.log(this.oneNofly);
+            this.polygonPoints = [];
+            this.noflyNum++;
+            this.oneNofly.x = [];
+            this.oneNofly.y = [];
+            this.oneNofly.num = 0;
         },
 
         //禁飞区算法路线绘制
         nofly() {
+            if(this.pointData == []||this.noflyData == []){
+                this.$message({
+                        showClose: true,
+                        message: '请添加禁飞区或者添加无人机要经过的点',
+                        type: 'error',
+                    });
+                return;
+            }
 
-        }
+            nofly(this.pointData, this.planeNumNofly, this.limitNofly, this.noflyPriority,this.noflyData).then(res => {
+                if (res.state == 200) {
+                    const crystal = toRaw(res.data);
+                    console.log(crystal);
+                    const paths = crystal.path;
+                    if (paths.length === 0) {
+                        this.$message({
+                            showClose: true,
+                            message: '当前无人机无法满足巡回条件！',
+                            type: 'error',
+                        });
+                        return;
+                    }
+
+                    // let n = 1;
+                    // paths.forEach((path, index) => {
+                    //     console.log(path.length);
+                    //     let pointsArray = [];
+                    //     let point = [];
+                    //     const points = this.pointData.points;
+
+                    //     for (let i = 0; i < path.length; i++) {
+                    //         point = points[path[i]];
+                    //         pointsArray.push(new BMap.Point(point.lng, point.lat));
+                    //     }
+                    //     // 自定义颜色
+                    //     const randomColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+                    //     this.line = new BMap.Polyline(pointsArray, {
+                    //         strokeColor: randomColor,
+                    //         strokeWeight: 2,
+                    //         strokeOpacity: 0.9,
+                    //     });
+                    //     this.map.addOverlay(this.line);
+                    // });
+                    this.isDrawingLines = true;
+                    this.$message({
+                        showClose: true,
+                        message: '多无人机路径规划成功！',
+                        type: 'success',
+                    });
+                } else {
+                    this.$message({
+                        showClose: true,
+                        message: '规划失败',
+                        type: 'error',
+                    });
+                }
+            }).catch(err => {
+                if (err.response) {
+                    console.log(err.response);
+                } else {
+                    console.log(err);
+                }
+            });
+        },
     },
 }
 
