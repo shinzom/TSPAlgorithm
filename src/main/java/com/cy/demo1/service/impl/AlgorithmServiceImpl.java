@@ -3,6 +3,7 @@ package com.cy.demo1.service.impl;
 import com.cy.demo1.algorithm.*;
 import com.cy.demo1.algorithm.Aco.ACO;
 import com.cy.demo1.algorithm.MTSP.DataForMultipleDrones;
+import com.cy.demo1.algorithm.MTSP.MTSPWithLimits;
 import com.cy.demo1.data.Data;
 import com.cy.demo1.data.Result;
 import com.cy.demo1.data.Result2;
@@ -174,6 +175,9 @@ public class AlgorithmServiceImpl implements IAlgorithmService{
         result.time = time;
         System.out.println("程序运行时间： " + time + "ms");
         result.path = path;
+        result.x = MTSPWithLimits.dataForMultipleDronesWithForbiddenZones.x;
+        result.y = MTSPWithLimits.dataForMultipleDronesWithForbiddenZones.y;
+        result.num = MTSPWithLimits.dataForMultipleDronesWithForbiddenZones.num;
 
         return result;
     }
