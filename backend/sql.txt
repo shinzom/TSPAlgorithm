@@ -1,0 +1,52 @@
+create table result(
+resultId int NOT NULL AUTO_INCREMENT,	/*结果ID，自动加1*/
+number int NOT NULL,	/*点的数量*/
+x varchar(1000)  NOT NULL,	/*点的x坐标*/
+y varchar(1000)  NOT NULL,	/*点的y坐标*/
+primary key(resultId)
+);
+
+/*贪心算法结果*/
+create table result_tx(	
+resultId int NOT NULL,
+time long,	/*时间*/
+distance double,	/*距离*/
+path varchar(1000),	/*路径*/
+foreign key(resultId) references result(resultId)
+);
+
+/*动态规划算法结果*/
+create table result_dp(	
+resultId int NOT NULL,
+time long,	/*时间*/
+distance double,	/*距离*/
+path varchar(1000),	/*路径*/
+foreign key(resultId) references result(resultId)
+);
+
+/*模拟退火算法结果*/
+create table result_sa(	
+resultId int NOT NULL,
+time long,	/*时间*/
+distance double,	/*距离*/
+path varchar(1000),	/*路径*/
+foreign key(resultId) references result(resultId)
+);
+
+/*禁忌搜索算法结果*/
+create table result_tabu(	
+resultId int NOT NULL,
+time long,	/*时间*/
+distance double,	/*距离*/
+path varchar(1000),	/*路径*/
+foreign key(resultId) references result(resultId)
+);
+
+/*蚁群算法结果*/
+create table result_aco(	
+resultId int NOT NULL,
+time long,	/*时间*/
+distance double,	/*距离*/
+path varchar(1000),	/*路径*/
+foreign key(resultId) references result(resultId)
+);

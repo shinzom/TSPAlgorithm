@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document xmlns="">
+    <name>轨迹点位</name>
+    <Placemark>
+      <name>点位1</name>
+      <styleUrl>#randomColorRegion</styleUrl>
+      <description>R</description>
+      <Polygon>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>116.389663,39.924961,100 116.389807,39.926787,100 116.393184,39.927561,100 116.398431,39.926344,100 116.397496,39.923301,100 116.394909,39.919206,100 116.389016,39.921751,100 116.38262,39.926897,100 116.399724,39.930328,100 116.389663,39.924961,100</coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+      <Style>
+        <PolyStyle>
+          <color>96ffff00</color>
+        </PolyStyle>
+      </Style>
+    </Placemark>
+  </Document>
+</kml>
