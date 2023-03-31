@@ -1,17 +1,42 @@
 package com.cy.demo1.controller;
 
+import com.cy.demo1.algorithm.MTSP.ForbiddenZone;
 import com.cy.demo1.data.Data;
 import com.cy.demo1.data.Data2;
 import com.cy.demo1.entity.Data_;
 import com.cy.demo1.entity.Result_;
 import com.cy.demo1.service.IShowService;
 import com.cy.demo1.util.JsonResult;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.Map;
+
+import static com.cy.demo1.kml.MultipleKMLGenerator.generateMultipleKML;
+
 
 @RestController
 @CrossOrigin
@@ -98,4 +123,48 @@ public class ShowController extends BaseController{
         iShowService.getKml(x, y, path, filename);
         return new JsonResult<Integer>(OK,0);
     }
+
+    @CrossOrigin
+    @PostMapping("/downloadKML")
+    public ResponseEntity<ByteArrayResource> downloadKML(HttpServletResponse response,
+                                                         @RequestBody Map<String, Object> requestData) throws IOException {
+
+        // Get new points and path from request data
+        List<Map<String, Double>> newPointsList = (List<Map<String, Double>>) requestData.get("newPoints");
+        List<List<Integer>> pathList = (List<List<Integer>>) requestData.get("path");
+        int[][] path = pathList.stream().map(u -> u.stream().mapToInt(i -> i).toArray()).toArray(int[][]::new);
+
+
+        // Convert new points list to double arrays
+        double[] x = new double[newPointsList.size()];
+        double[] y = new double[newPointsList.size()];
+        for (int i = 0; i < newPointsList.size(); i++) {
+            x[i] = newPointsList.get(i).get("lng");
+            y[i] = newPointsList.get(i).get("lat");
+        }
+
+//        // 生成KML字符串
+//        double[] x = {39.984702, 39.984683, 39.984686, 39.984688};
+//        double[] y = {116.318417, 116.318450, 116.318417, 116.318385};
+//        int[][] path = {{0, 1, 2}, {1, 2, 3}, {2, 3, 0}};
+
+        System.out.println("hello");
+        // Generate KML files
+        generateMultipleKML(x, y, path, "paths.zip");
+
+        // Send zip file to frontend
+        Path pathToFile = Paths.get("paths.zip");
+        ByteArrayResource resource = new ByteArrayResource(Files.readAllBytes(pathToFile));
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=paths.zip");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentLength(resource.contentLength())
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(resource);
+    }
+
+
 }

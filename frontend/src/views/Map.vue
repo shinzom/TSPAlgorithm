@@ -118,6 +118,7 @@ import { aco } from '../utils/api'
 import { mtsp } from '../utils/api'
 import { reshow } from '../utils/api'
 import { nofly } from '../utils/api'
+import {downloadKML} from "../utils/api"
 import { toRaw } from '@vue/reactivity'
 
 export default {
@@ -871,6 +872,7 @@ export default {
                         // 也许可以在表格里显示对应的颜色
                     });
                     this.isDrawingLines = true;
+                    downloadKML(newPoints, paths);
                     this.$message({
                         showClose: true,
                         message: '多无人机路径规划成功！',
@@ -953,6 +955,7 @@ export default {
                         });
                         return;
                     }
+
                     const x_new = crystal.x;
                     const y_new = crystal.y;
                     let newPoints = [];
@@ -988,11 +991,15 @@ export default {
                         this.map.addOverlay(this.line);
                     });
                     this.isDrawingLines = true;
+                    console.log(paths)
+                    downloadKML(newPoints, paths);
                     this.$message({
                         showClose: true,
                         message: '多无人机路径规划成功！',
                         type: 'success',
                     });
+
+                    
                 } else {
                     this.$message({
                         showClose: true,
@@ -1008,6 +1015,9 @@ export default {
                 }
             });
         },
+        
+    
+        
     },
 }
 

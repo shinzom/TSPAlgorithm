@@ -217,6 +217,7 @@ public class AlgorithmController extends BaseController{
         data.forbiddenZones = forbiddenZones;
 
         ResultForMultipleDrones result = algorithmService.getResult_mtsp(data, planeNum, limit, radioVal);
+
         return new JsonResult<ResultForMultipleDrones>(OK, result);
     }
 }
