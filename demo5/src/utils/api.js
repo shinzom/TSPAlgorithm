@@ -102,8 +102,30 @@ export function aco(pointData) {
   })
 }
 
-// mTSP
-export function mtsp(pointData, inputDroneNumber, inputDroneRange,radioVal) {
+// // mTSP
+// export function mtsp(pointData, inputDroneNumber, inputDroneRange, forbiddenZones) {
+//   console.log('mtsp');
+//   return axios({
+//     url: '/callAlgorithm_mtsp/',
+//     method: 'post',
+//     data: {
+//       num: pointData.num,
+//       x: JSON.stringify(pointData.x),
+//       y: JSON.stringify(pointData.y),
+//       planeNum: inputDroneNumber,
+//       limit: inputDroneRange,
+//       radioVal: true,
+//       forbiddenZones: forbiddenZones
+//     },
+//     headers: {
+//       'Content-Type': 'application/json',
+//     },
+//   });
+// }
+
+
+// mtsp
+export function mtsp(pointData, inputDroneNumber, inputDroneRange, radioVal) {
   console.log('mtsp')
   return request({
     url: '/callAlgorithm_mtsp/',
@@ -116,12 +138,15 @@ export function mtsp(pointData, inputDroneNumber, inputDroneRange,radioVal) {
       limit: inputDroneRange,
       radioVal: radioVal,
     },
-    data: null, // 注意请求体写在这里
+    data: [],
     headers: {
       'Content-Type': 'application/json',
     },
   })
 }
+
+
+
 
 //历史记录图表
 export function show() {

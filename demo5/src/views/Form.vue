@@ -28,8 +28,8 @@
             </el-table-column>
             <el-table-column label="操作" width="200">
                 <template #default="scope">
-                    <el-button class="show_btn" size="small" @click="handleReshow(scope.row)">复现路线</el-button>
-                    <el-button class="show_btn" size="small" @click="exportPath(scope.row)">导出路线</el-button>
+                    <el-button class="show_btn" style="background-color: #9cc89f;width:80px;" @click="handleReshow(scope.row)">复现路线</el-button>
+                    <el-button class="show_btn" style="background-color: #9cc8ac;width:80px;" @click="exportPath(scope.row)">导出路线</el-button>
                 </template>
             </el-table-column>
         </el-table>

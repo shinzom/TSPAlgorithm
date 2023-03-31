@@ -181,14 +181,14 @@ export default {
             isDrawingNofly: false,//是否绘制禁飞区
             //一个禁飞区的数据传输的存储
             oneNofly: {
-                num: 0,
+                nodeNum: 0,
                 x: [],
                 y: [],
-            },    
-            noflyData:[],//所有禁飞区的数据
+            },
+            noflyData: [],//所有禁飞区的数据
             noflyNum: 0,//禁飞区数量
             polygonPoints: [],//一个禁飞区的点集
-            
+
         };
     },
 
@@ -242,7 +242,7 @@ export default {
                     this.map.addOverlay(circleNofly);
                     this.oneNofly.x.push(pointNofly.lng);
                     this.oneNofly.y.push(pointNofly.lat);
-                    this.oneNofly.num++;
+                    this.oneNofly.nodeNum++;
                     //this.circlesNofly.push(circle);
                     console.log("禁飞区点的经度：" + pointNofly.lng + "，纬度：" + pointNofly.lat);
                     this.polygonPoints.push({ lng: pointNofly.lng, lat: pointNofly.lat });
@@ -341,6 +341,18 @@ export default {
 
             this.mTSPData = [];//多架无人机表格数据清空
 
+            this.noflyPriority = true;//选择优先条件
+            this.planeNumNofly = 0;//无人机数量
+            this.limitNofly = 0;//距离限制
+            this.isDrawingNofly = false;//是否绘制禁飞区
+            //一个禁飞区的数据传输的存储
+            this.oneNofly.nodeNum = 0;
+            this.oneNofly.x = [];
+            this.oneNofly.y = [];
+            this.noflyData = [];//所有禁飞区的数据
+            this.noflyNum = 0;//禁飞区数量
+            this.polygonPoints = [];//一个禁飞区的点集
+
             // 清空连线
             if (this.lines_tx) {
                 this.map.removeOverlay(this.lines_tx);
@@ -393,7 +405,7 @@ export default {
                     if (this.pointData.points.length < 2) {
                         return;
                     }
-
+                    console.log(this.pointData);
                     getid(this.pointData).then(res => {
                         if (res.state == 200) {
                             this.pointData.alg_id = res.data
@@ -914,21 +926,21 @@ export default {
             this.noflyNum++;
             this.oneNofly.x = [];
             this.oneNofly.y = [];
-            this.oneNofly.num = 0;
+            this.oneNofly.nodeNum = 0;
         },
 
         //禁飞区算法路线绘制
         nofly() {
-            if(this.pointData == []||this.noflyData == []){
+            if (this.pointData == [] || this.noflyData == []) {
                 this.$message({
-                        showClose: true,
-                        message: '请添加禁飞区或者添加无人机要经过的点',
-                        type: 'error',
-                    });
+                    showClose: true,
+                    message: '请添加禁飞区或者添加无人机要经过的点',
+                    type: 'error',
+                });
                 return;
             }
 
-            nofly(this.pointData, this.planeNumNofly, this.limitNofly, this.noflyPriority,this.noflyData).then(res => {
+            nofly(this.pointData, this.planeNumNofly, this.limitNofly, this.noflyPriority, this.noflyData).then(res => {
                 if (res.state == 200) {
                     const crystal = toRaw(res.data);
                     console.log(crystal);
@@ -941,27 +953,40 @@ export default {
                         });
                         return;
                     }
+                    const x_new = crystal.x;
+                    const y_new = crystal.y;
+                    let newPoints = [];
+                    for (let i = 0; i < x_new.length; i++) {
+                        newPoints.push({ lng: x_new[i], lat: y_new[i] });
+                    }
 
-                    // let n = 1;
-                    // paths.forEach((path, index) => {
-                    //     console.log(path.length);
-                    //     let pointsArray = [];
-                    //     let point = [];
-                    //     const points = this.pointData.points;
+                    const circle1 = new BMap.Circle(newPoints[0], 50, {
+                        strokeColor: "black",
+                        strokeWeight: 15,
+                        fillColor: "green",
+                        fillOpacity: 0.2,
+                    });
+                    this.map.addOverlay(circle1);
 
-                    //     for (let i = 0; i < path.length; i++) {
-                    //         point = points[path[i]];
-                    //         pointsArray.push(new BMap.Point(point.lng, point.lat));
-                    //     }
-                    //     // 自定义颜色
-                    //     const randomColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
-                    //     this.line = new BMap.Polyline(pointsArray, {
-                    //         strokeColor: randomColor,
-                    //         strokeWeight: 2,
-                    //         strokeOpacity: 0.9,
-                    //     });
-                    //     this.map.addOverlay(this.line);
-                    // });
+                    paths.forEach((path, index) => {
+                        console.log(path.length);
+                        let pointsArray = [];
+                        let point = [];
+                        //const points = this.pointData.points;
+
+                        for (let i = 0; i < path.length; i++) {
+                            point = newPoints[path[i]];
+                            pointsArray.push(new BMap.Point(point.lng, point.lat));
+                        }
+                        // 自定义颜色
+                        const randomColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+                        this.line = new BMap.Polyline(pointsArray, {
+                            strokeColor: randomColor,
+                            strokeWeight: 2,
+                            strokeOpacity: 0.9,
+                        });
+                        this.map.addOverlay(this.line);
+                    });
                     this.isDrawingLines = true;
                     this.$message({
                         showClose: true,
