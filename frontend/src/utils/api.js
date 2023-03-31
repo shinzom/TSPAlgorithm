@@ -1,4 +1,5 @@
 import request from "./request";
+import axios from "axios";
 
 //获取id
 export function getid(pointData) {
@@ -203,4 +204,39 @@ export function nofly(pointData, inputDroneNumber, inputDroneRange,radioVal,nofl
       'Content-Type': 'application/json',
     },
   })
+}
+
+
+export function downloadKML(newPoints, path) {
+  const requestData = {
+    newPoints: newPoints,
+    path: path
+  };
+
+  // 使用fetch API 发送请求
+  return fetch('http://localhost:8080/downloadKML', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(requestData)
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.blob();
+    })
+    .then(blob => {
+      // 创建一个临时URL对象以下载文件
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'paths.zip');
+      document.body.appendChild(link);
+      link.click();
+    })
+    .catch(error => {
+      console.error('There was a problem with the fetch operation:', error);
+    });
 }
