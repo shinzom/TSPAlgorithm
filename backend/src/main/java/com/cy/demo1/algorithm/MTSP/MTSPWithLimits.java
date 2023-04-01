@@ -354,6 +354,9 @@ public class MTSPWithLimits {
         int minIndex = -1;
         int unassignedDroneIndex = -1;
 
+        // 由于计算误差，应该计算加上一些限制
+        limitDistance *= 0.9;
+
         double minAssignedDistance = Double.MAX_VALUE;
         int minAssignedIndex = -1;
 
