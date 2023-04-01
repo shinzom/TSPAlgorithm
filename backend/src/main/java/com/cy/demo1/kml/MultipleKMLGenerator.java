@@ -36,7 +36,6 @@ public class MultipleKMLGenerator {
 
         kml.append("</Document>\n");
         kml.append("</kml>\n");
-        System.out.println("CONTENT: " + kml.toString());
         return kml.toString();
     }
 
@@ -51,7 +50,6 @@ public class MultipleKMLGenerator {
         // 创建一个zip输出流
         try (FileOutputStream fos = new FileOutputStream(zipFileName);
              ZipOutputStream zos = new ZipOutputStream(fos)) {
-            System.out.println(path.length + "le");
             // 循环遍历每一条路径
             for (int i = 0; i < path.length; i++) {
                 // 生成KML字符串

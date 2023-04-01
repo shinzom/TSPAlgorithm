@@ -95,7 +95,18 @@
                         <el-button
                             style="background-color: #a2d8ca;width: 250px ;margin-left: 23px;height:30px;margin-top: 5px;"
                             @click="nofly">绘制路线</el-button>
+                        <br>
+                        <br>
 
+                        <div style="display: flex; justify-content: center;">
+                            <label class="switch-label">
+                                <span>自动下载 KML 文件</span>
+                                    <label class="switch">
+                                        <input type="checkbox" v-model="isChecked">
+                                        <span class="slider round"></span>
+                                </label>
+                            </label>
+                        </div>
                     </el-collapse-item>
                 </el-collapse>
             </el-aside>
@@ -189,6 +200,8 @@ export default {
             noflyData: [],//所有禁飞区的数据
             noflyNum: 0,//禁飞区数量
             polygonPoints: [],//一个禁飞区的点集
+
+            isChecked: false,
 
         };
     },
@@ -991,7 +1004,11 @@ export default {
                     });
                     this.isDrawingLines = true;
                     console.log(paths)
-                    downloadKML(newPoints, paths);
+                    if (this.isChecked)
+                    {
+                        downloadKML(newPoints, paths);
+                    }
+                    
                     this.$message({
                         showClose: true,
                         message: '多无人机路径规划成功！',
@@ -1075,4 +1092,62 @@ export default {
     border-bottom: 2px solid #1e9ee9;
     background-color: #d7f8ff;
 }
+.switch-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 200px;
+}
+
+.switch-label span {
+  margin-right: 10px;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+  border-radius: 34px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px; 
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(18px); /* 修改这个值 */
+  -ms-transform: translateX(18px);
+  transform: translateX(18px);
+}
+
 </style>
