@@ -872,7 +872,6 @@ export default {
                         // 也许可以在表格里显示对应的颜色
                     });
                     this.isDrawingLines = true;
-                    downloadKML(newPoints, paths);
                     this.$message({
                         showClose: true,
                         message: '多无人机路径规划成功！',

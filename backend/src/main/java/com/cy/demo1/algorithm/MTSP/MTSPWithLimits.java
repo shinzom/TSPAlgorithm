@@ -124,8 +124,67 @@ public class MTSPWithLimits {
             System.out.println("DIS " + i + ": " + pathDistances[i]);
             System.out.println(Arrays.toString(paths[i]));
         }
-
+        //
+        if (paths.length == 0)
+        {
+            optimize(paths, adjacencyMatrix, forbiddenRounds, pathDistances, limitDistance);
+        }
         return paths;
+    }
+
+
+
+    public static int[][] optimize(int[][] paths, double[][] distanceMatrix, List<Integer>[][] forbiddenRounds, double[] pathDistances, double maxRange) {
+        boolean improvement = true;
+        while (improvement) {
+            improvement = false;
+            for (int i = 0; i < paths.length; i++) {
+                for (int j = 0; j < paths[i].length - 1; j++) {
+                    for (int i2 = i; i2 < paths.length; i2++) {
+                        int kStart = (i2 == i) ? j + 1 : 0;
+                        for (int k = kStart; k < paths[i2].length - 1; k++) {
+                            if (forbiddenRounds[paths[i][j]][paths[i2][k]] == null &&
+                                    forbiddenRounds[paths[i][j + 1]][paths[i2][k + 1]] == null) {
+                                double currentDistance = distanceMatrix[paths[i][j]][paths[i][j + 1]] + distanceMatrix[paths[i2][k]][paths[i2][k + 1]];
+                                double newDistance = distanceMatrix[paths[i][j]][paths[i2][k]] + distanceMatrix[paths[i][j + 1]][paths[i2][k + 1]];
+                                if (newDistance < currentDistance) {
+                                    double newPathDistanceI = pathDistances[i] - distanceMatrix[paths[i][j]][paths[i][j + 1]] + distanceMatrix[paths[i][j]][paths[i2][k]];
+                                    double newPathDistanceI2 = pathDistances[i2] - distanceMatrix[paths[i2][k]][paths[i2][k + 1]] + distanceMatrix[paths[i][j + 1]][paths[i2][k + 1]];
+                                    if (newPathDistanceI <= maxRange && newPathDistanceI2 <= maxRange) {
+                                        if (i == i2) {
+                                            reverse(paths[i], j + 1, k);
+                                        } else {
+                                            swap(paths, i, j + 1, i2, k);
+                                        }
+                                        improvement = true;
+                                        pathDistances[i] = newPathDistanceI;
+                                        pathDistances[i2] = newPathDistanceI2;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return paths;
+    }
+
+    private static void reverse(int[] path, int i, int j) {
+        while (i < j) {
+            int temp = path[i];
+            path[i] = path[j];
+            path[j] = temp;
+            i++;
+            j--;
+        }
+    }
+
+    private static void swap(int[][] paths, int i1, int j1, int i2, int j2) {
+        int[] tempPath = new int[j2 - j1 + 1];
+        System.arraycopy(paths[i2], j1, tempPath, 0, j2 - j1 + 1);
+        System.arraycopy(paths[i1], j1, paths[i2], j1, j2 - j1 + 1);
+        System.arraycopy(tempPath, 0, paths[i1], j1, j2 - j1 + 1);
     }
 
 
