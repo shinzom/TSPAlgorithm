@@ -353,11 +353,31 @@ public class MTSPWithLimits {
         double minDistance = Double.MAX_VALUE;
         int minIndex = -1;
         int unassignedDroneIndex = -1;
+
+        double minAssignedDistance = Double.MAX_VALUE;
+        int minAssignedIndex = -1;
+
         for (int i = 0; i < dronePaths.size(); i++) {
             List<Integer> path = dronePaths.get(i);
-            if (prioritizeAllDrones && path.size() == 1) { // 如果有未分配任务的无人机且优先启动所有无人机
-                unassignedDroneIndex = i;
-                break;
+            // 如果有未分配任务的无人机且优先启动所有无人机
+            if (prioritizeAllDrones)
+            {
+                if (path.size() == 1)
+                {
+                    unassignedDroneIndex = i;
+                    break;
+                }
+                double assignedDistance = 0;
+                for (int j = 0; j < path.size() - 2; j++)
+                {
+                    assignedDistance += adjacencyMatrix[path.get(j)][path.get(j+1)];
+                }
+                if (minAssignedDistance > assignedDistance)
+                {
+                    minAssignedDistance = assignedDistance;
+                    minAssignedIndex = i;
+                }
+
             }
             int lastNode = path.get(path.size() - 1);
             double currentDistance = adjacencyMatrix[lastNode][destination];
@@ -367,10 +387,22 @@ public class MTSPWithLimits {
                 minDistance = currentDistance;
                 minIndex = i;
             }
+
         }
-        if (unassignedDroneIndex != -1) { // 当找到未分配任务的无人机时，优先使用未分配任务的无人机
-            return unassignedDroneIndex;
+        // 如果是优先启动所有无人机，则优先选择无人机距离短的
+        if (prioritizeAllDrones)
+        {
+            if (unassignedDroneIndex != -1) { // 当找到未分配任务的无人机时，优先使用未分配任务的无人机
+                return unassignedDroneIndex;
+            } else {
+                List<Integer> path = dronePaths.get(minAssignedIndex);
+                if (droneDistances[minAssignedIndex] + adjacencyMatrix[path.get(path.size() - 1)][destination] + adjacencyMatrix[destination][0] <= limitDistance)
+                {
+                    return minAssignedIndex;
+                }
+            }
         }
+
         return minIndex;
     }
 }
